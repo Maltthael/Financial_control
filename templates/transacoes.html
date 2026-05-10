@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Pagina de transações</h1>
+    <table>
+        <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Categoria</th>
+            <th>Tipo</th>
+        </tr>
+        {% for i in transacoes %}
+        <tr>
+            <td>{{ i.descricao }}</td>
+            <td>{{ i.valor }}</td>
+            <td>{{ i.categoria }}</td>
+            <td class="{{ 'receita' if i.receita else 'gasto' }}">
+                {{ "Receita" if i.receita else "Gasto" }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+  
+</body>
+</html>
