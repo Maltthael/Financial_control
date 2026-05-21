@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Session, select
 from app.database import engine, Transacao
 
 
@@ -8,9 +8,7 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="templates")
 
-    
-    
-    
+
 @router.get("/transacoes")
 def home(request: Request):
     with Session(engine) as session:

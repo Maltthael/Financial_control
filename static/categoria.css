@@ -1,8 +1,4 @@
-.titulo{
-    color: blueviolet;
-}
-
-.div_desaparecer{
+.div_desaparecer_categoria{
     display: none;
     position: fixed;
     top: 0;
@@ -11,15 +7,11 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
 }
-.form_transacao{
+
+
+.form_categoria{
     background: white;
     margin: 10% auto;
     padding: 20x;
     width: 300px;
 }
-
-body{
- background-color: palevioletred;
-}
-
-

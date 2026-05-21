@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
-from sqlmodel import Field, Session, SQLModel, create_engine, select
-from app.database import engine, Transacao
+from sqlmodel import Session, select
+from app.database import engine, Transacao, Categoria
 
 
 router = APIRouter()
@@ -18,4 +18,14 @@ def categorias(request: Request):
      name="categorias.html",
      context={ "categorias": categorias}
  )
+    
+    
+@router.post("/adicionar_categoria")
+def criar_categoria(categoria: Categoria):
+    with Session(engine) as session:
+        session.add(categoria)
+        session.commit()
+        session.refresh(categoria)
+    nome = categoria.nome
+    return {"mensagem": f"A categoria {nome} foi registrado!"}
     

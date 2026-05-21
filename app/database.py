@@ -1,9 +1,18 @@
-from sqlmodel import create_engine, SQLModel, Field
-
+from sqlmodel import create_engine, SQLModel, Field, Relationship
+from typing import List
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 engine = create_engine(sqlite_url)
+
+
+class Categoria(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    nome: str = Field(index=True, unique=True)
+    transacoes: List["Transacao"] = Relationship(back_populates= "categoria")
+
+
+
 
 class Transacao(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -11,6 +20,11 @@ class Transacao(SQLModel, table=True):
     valor: float
     categoria: str
     receita: bool
+    
+    categoria_id: int | None = Field(default=None, foreign_key="categoria.id")
+    categoria: Categoria | None = Relationship(back_populates="transacoes")
+
+
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
