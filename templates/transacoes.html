@@ -1,12 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Transacoes</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
-    <h1>Pagina de transações</h1>
+    <h1 class="">Pagina de transações</h1>
+    <a href="/categorias">Categorias</a>
+
+    <div>
+        <p>Gasto total: {{ total_gasto }}</p>
+        <p>Receita total: {{ total_receita }}</p>
+        <p>Saldo total: {{ saldo_final }}</p>
+    </div>
+
     <table>
         <tr>
             <th>Descrição</th>
@@ -25,6 +36,23 @@
         </tr>
         {% endfor %}
     </table>
-  
+    <button id="btnAbrir">Adicionar nova transação</button>
+
+    <div id="modalTransacao" class="div_desaparecer">
+        <div class="form_transacao">
+            <h2>Nova transação</h2>
+            <form id="formTransacao">
+                <input type="text" id="descricao" placeholder="Descrição" required><br>
+                <input type="number" id="valor" placeholder="Valor" required><br>
+                <input type="text" id="categoria" placeholder="Categoria" required><br>
+                <input type="checkbox" id="receita">É Receita?<br>
+                <button type="submit" id="btnfechar">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+<script src="/static/scripts.js"></script>
+
 </body>
+
 </html>
