@@ -32,7 +32,7 @@ def home(request: Request):
     
     
     
-@router.post("/adicionar_transação")
+@router.post("/adicionar_transacao")
 def criar_receita(transacao: Transacao):
     with Session(engine) as session:
         session.add(transacao)
