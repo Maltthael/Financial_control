@@ -18,9 +18,7 @@ class Transacao(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     descricao: str
     valor: float
-    categoria: str
     receita: bool
-    
     categoria_id: int | None = Field(default=None, foreign_key="categoria.id")
     categoria: Categoria | None = Relationship(back_populates="transacoes")
 

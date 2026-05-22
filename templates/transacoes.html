@@ -29,7 +29,7 @@
         <tr>
             <td>{{ i.descricao }}</td>
             <td>{{ i.valor }}</td>
-            <td>{{ i.categoria }}</td>
+            <td>{{ i.categoria_id }}</td>
             <td class="{{ 'receita' if i.receita else 'gasto' }}">
                 {{ "Receita" if i.receita else "Gasto" }}
             </td>
@@ -42,8 +42,8 @@
         <div class="form_transacao">
             <h2>Nova transação</h2>
             <form id="formTransacao">
-                <input type="text" id="descricao" placeholder="Descrição" required><br>
-                <input type="number" id="valor" placeholder="Valor" required><br>
+                <input type="text" id="descricao" placeholder="descrição" required><br>
+                <input type="number" id="valor" placeholder="valor" required><br>
                 <select id="categoria_id">
                     {% for cat in categorias %}
                     <option value="{{ cat.id }}">{{ cat.nome }}</option>

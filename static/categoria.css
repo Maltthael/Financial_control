@@ -1,3 +1,8 @@
+.teste{
+    background-color: rgb(255, 255, 255);
+}
+
+
 .div_desaparecer_categoria{
     display: none;
     position: fixed;

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
-from app.database import engine, Transacao
+from app.database import engine, Transacao, Categoria
 
 
 router = APIRouter()
@@ -10,22 +10,24 @@ templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/transacoes")
-def home(request: Request):
+def listar_transacoes(request: Request):
     with Session(engine) as session:
         transacoes = session.exec(select(Transacao)).all()
-        todas = session.exec(select(Transacao)).all()
-        total_receita = sum(t.valor for t in todas if t.receita)
-        total_gasto = sum(t.valor for t in todas if not t.receita)
+        categorias = session.exec(select(Categoria)).all()
+        total_gasto = sum(t.valor for t in transacoes if not t.receita)
+        total_receita = sum(t.valor for t in transacoes if t.receita)
         saldo_final = total_receita - total_gasto
+        
     return templates.TemplateResponse(
-        request=request, 
-        name="transacoes.html", 
-        context={"transacoes": transacoes,
-                 "total_receita":total_receita,
-                 "total_gasto":total_gasto,
-                 "saldo_final":saldo_final
-                 }
-       
+        request=request,
+        name="transacoes.html",
+        context={
+            "transacoes": transacoes,
+            "categorias": categorias,
+            "total_gasto": total_gasto,
+            "total_receita": total_receita,
+            "saldo_final": saldo_final
+        }
     )
     
     

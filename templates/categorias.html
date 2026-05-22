@@ -1,22 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="/static/categoria.css"
-</head>
-<body>
+    <link rel="stylesheet" href="/static/categoria.css">
+ </head>
+
+<body class="teste">  
     <h1>Pagina de registro de categorias</h1>
     <a href="/transacoes">Transacoes</a>
     <button id="btnAbrir">Criar nova categoria</button>
 
+
+    <table>
+        <tr>
+            <th>Nome</th>
+        </tr>
+
+        {% for i in categoria %}
+        <tr>
+            <td>{{ i.nome }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+
+
+
     <div id="modalCategoria" class="div_desaparecer_categoria">
         <div class="form_categoria">
-            <form id="formCategoria" >
+            <form id="formCategoria">
                 <h2>Criar categoria</h2>
                 <input id="nome" placeholder="Nome">
-                 <button type="submit" id="btnFechar">Salvar</button>
+                <button type="submit" id="btnFechar">Salvar</button>
                 <button id="btnCancelar">Cancelar</button>
             </form>
         </div>
@@ -24,4 +45,5 @@
 
     <script src="/static/scripts_categorias.js"></script>
 </body>
-</html>                                                         
+
+</html>

@@ -17,8 +17,6 @@ btnFechar.addEventListener('click', () =>{
 });
 
 
-
-
 document.getElementById('formTransacao').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -26,7 +24,8 @@ const dados = {
     descricao: document.getElementById('descricao').value,
     valor: parseFloat(document.getElementById('valor').value),
     receita: document.getElementById('receita').checked,
-    categoria: document.getElementById('categoria').value,
+    categoria_id: document.getElementById('categoria_id').value
+
 };
 
 
