@@ -20,7 +20,6 @@ templates = Jinja2Templates(directory="templates")
 
 
 
-    
 
 
 # @app.get("/criar_categoria")

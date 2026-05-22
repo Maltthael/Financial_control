@@ -24,24 +24,30 @@
             <th>Valor</th>
             <th>Categoria</th>
             <th>Tipo</th>
+            <th>Ações</th>
         </tr>
         {% for i in transacoes %}
         <tr>
             <td>{{ i.descricao }}</td>
             <td>{{ i.valor }}</td>
-            <td>{{ i.categoria_id }}</td>
+            <td>{{ i.categoria.nome}}</td>
             <td class="{{ 'receita' if i.receita else 'gasto' }}">
                 {{ "Receita" if i.receita else "Gasto" }}
+            </td>
+            <td>
+                <a href="/transacoes/deletar/{{ i.id }}">Excluir</a>
+                <a> Editar </a>
             </td>
         </tr>
         {% endfor %}
     </table>
     <button id="btnAbrir">Adicionar nova transação</button>
-
+    <button>Deletar transação</button>
     <div id="modalTransacao" class="div_desaparecer">
         <div class="form_transacao">
             <h2>Nova transação</h2>
             <form id="formTransacao">
+                <input type="hidden" id="transacao_id">
                 <input type="text" id="descricao" placeholder="descrição" required><br>
                 <input type="number" id="valor" placeholder="valor" required><br>
                 <select id="categoria_id">

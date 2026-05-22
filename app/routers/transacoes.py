@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
+from sqlalchemy.orm import joinedload
 from app.database import engine, Transacao, Categoria
 
 
@@ -12,8 +14,9 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/transacoes")
 def listar_transacoes(request: Request):
     with Session(engine) as session:
-        transacoes = session.exec(select(Transacao)).all()
-        categorias = session.exec(select(Categoria)).all()
+        statement = select(Transacao).options(joinedload(Transacao.categoria))
+        transacoes = session.exec(statement).all()
+        categorias = session.exec(select(Categoria)).all() # <-- ISTO É NECESSÁRIO
         total_gasto = sum(t.valor for t in transacoes if not t.receita)
         total_receita = sum(t.valor for t in transacoes if t.receita)
         saldo_final = total_receita - total_gasto
@@ -30,7 +33,18 @@ def listar_transacoes(request: Request):
         }
     )
     
+@router.get("/transacoes/deletar/{transacao_id}")
+def deletar_transacao(transacao_id: int):
+        with Session(engine) as session:
+            transacoes = session.get(Transacao, transacao_id)
+            
+            if transacoes:
+                session.delete(transacoes)
+                session.commit()
+                
+        return RedirectResponse(url="/transacoes", status_code = 303)
     
+@router.get("/transacoes/editar/{transacao_id}") 
     
 @router.post("/adicionar_transacao")
 def criar_receita(transacao: Transacao):

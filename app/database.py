@@ -6,6 +6,7 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 engine = create_engine(sqlite_url)
 
 
+
 class Categoria(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nome: str = Field(index=True, unique=True)

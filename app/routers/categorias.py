@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 from app.database import engine, Categoria
@@ -20,6 +21,16 @@ def categorias(request: Request):
         name="categorias.html",
         context={"categoria": categorias} 
     )
+    
+@router.get("/categorias/deletar/{categoria_id}")
+def deletar_categoria(categoria_id: int):
+    with Session(engine) as session:
+        categoria = session.get(Categoria, categoria_id)
+        if categoria:
+            session.delete(categoria)
+            session.commit()
+    return RedirectResponse(url = '/categorias', status_code=303)
+        
      
     
 @router.post("/adicionar_categoria")

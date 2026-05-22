@@ -17,12 +17,13 @@
     <table>
         <tr>
             <th>Nome</th>
+            <th>Ações</th>
         </tr>
 
         {% for i in categoria %}
         <tr>
             <td>{{ i.nome }}</td>
-
+            <td><a href="/categorias/deletar/{{ i.id }}">Excluir</a></td>
         </tr>
 
         {% endfor %}
