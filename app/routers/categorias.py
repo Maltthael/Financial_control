@@ -40,5 +40,5 @@ def criar_categoria(categoria: Categoria):
         session.commit()
         session.refresh(categoria)
     nome = categoria.nome
-    return {"mensagem": f"A categoria {nome} foi registrado!"}
+    return {"mensagem": f"A categoria {nome} foi registrada!"}
     

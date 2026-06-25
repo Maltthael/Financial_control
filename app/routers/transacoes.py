@@ -34,7 +34,7 @@ def listar_transacoes(request: Request):
     )
     
 @router.get("/transacoes/deletar/{transacao_id}")
-def deletar_transacao(transacao_id: int):
+async def deletar_transacao(transacao_id: int):
         with Session(engine) as session:
             transacoes = session.get(Transacao, transacao_id)
             

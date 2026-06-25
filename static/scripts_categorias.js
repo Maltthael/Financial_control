@@ -4,8 +4,12 @@ const btnFechar = document.getElementById('btnFechar');
 const btnCancelar = document.getElementById('btnCancelar');
 
 
+
 btnAbrir.addEventListener('click', () =>{
+    document.getElementById('categoria_id_hidden').value = '';
+    document.getElementById('formCategoria').reset();
     modal.style.display = 'block';
+
 })
 
 btnFechar.addEventListener('click', () =>{
@@ -20,11 +24,16 @@ btnCancelar.addEventListener('click', () =>{
 document.getElementById('formCategoria').addEventListener('submit', async (e) => {
     e.preventDefault();
 
+
+const id = document.getElementById('categoria_id_hidden').value;
+
+const url = id ? `/categorias/editar/${id}` : '/adicionar_categoria';
+
 const dados = {
     nome: document.getElementById('nome').value
 };
 
-const resposta = await fetch('/adicionar_categoria',{
+const resposta = await fetch(url ,{
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(dados)
@@ -38,7 +47,7 @@ if (resposta.ok){
 }else{
     const erro = await resposta.json();
     console.error(erro)
-    alert("Erro ao salvar" + JSON.stringify(resultado))
+    alert("Erro ao salvar" + JSON.stringify(erro))
 }
 
 
