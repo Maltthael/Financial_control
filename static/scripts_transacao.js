@@ -22,14 +22,14 @@ btnFechar.addEventListener('click', () =>{
 
 document.getElementById('formTransacao').addEventListener('submit', async (e) => {
     e.preventDefault();
-
+const valorInput = document.getElementById('valor').value;
+const valorNumerico = parseFloat(valorInput.replace(',', '.'));
 const dados = {
-    descricao: document.getElementById('descricao').value,
-    valor: parseFloat(document.getElementById('valor').value),
-    receita: document.getElementById('receita').checked,
-    categoria_id: document.getElementById('categoria_id').value
-
-};
+        descricao: document.getElementById('descricao').value,
+        valor: valorNumerico,
+        receita: document.getElementById('receita').checked,
+        categoria_id: document.getElementById('categoria_id').value
+    };
 
 
 const resposta = await fetch('/adicionar_transacao',{

@@ -16,7 +16,7 @@ def listar_transacoes(request: Request):
     with Session(engine) as session:
         statement = select(Transacao).options(joinedload(Transacao.categoria))
         transacoes = session.exec(statement).all()
-        categorias = session.exec(select(Categoria)).all() # <-- ISTO É NECESSÁRIO
+        categorias = session.exec(select(Categoria)).all()
         total_gasto = sum(t.valor for t in transacoes if not t.receita)
         total_receita = sum(t.valor for t in transacoes if t.receita)
         saldo_final = total_receita - total_gasto
@@ -71,3 +71,13 @@ def exibir_gastos():
          comando = select(Transacao) .where(Transacao.receita == False)
          gastos = session.exec(comando).all()
     return gastos
+
+
+
+@router.get("/api/transacoes")
+def listar_transacoes_json():
+    with Session(engine) as session:
+        statement = select(Transacao).options(joinedload(Transacao.categoria))
+        transacoes = session.exec(statement).all()
+        # O FastAPI automaticamente converte objetos SQLModel para JSON
+        return transacoes
