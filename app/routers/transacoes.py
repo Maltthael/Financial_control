@@ -46,14 +46,14 @@ async def deletar_transacao(transacao_id: int):
     
 @router.get("/transacoes/editar/{transacao_id}") 
     
-@router.post("/adicionar_transacao")
-def criar_receita(transacao: Transacao):
+@router.post("/api/transacoes")
+def criar_transacao(transacao: Transacao):
     with Session(engine) as session:
         session.add(transacao)
         session.commit()
         session.refresh(transacao)
-    tipo = "Receita" if transacao.receita else "Gasto"
-    return {"mensagem": f"{tipo} de R${transacao.valor} em '{transacao.descricao}' registrado!"}
+    
+    return transacao
 
 
 
