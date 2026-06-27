@@ -79,5 +79,4 @@ def listar_transacoes_json():
     with Session(engine) as session:
         statement = select(Transacao).options(joinedload(Transacao.categoria))
         transacoes = session.exec(statement).all()
-        # O FastAPI automaticamente converte objetos SQLModel para JSON
         return transacoes

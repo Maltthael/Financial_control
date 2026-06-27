@@ -1,16 +1,27 @@
 import Button from '../../components/button';
+import { useEffect, useState} from 'react';
 
 function TransacaoForm({ onClose, onSave}){
+    const [categorias, setCategorias] = useState([]);
+    useEffect(() => {
+        fetch('http://localhost:8000/api/categorias')
+        .then(res => res.json())
+        .then(data => setCategorias(data))
+        .catch(err => console.error("Erro ao buscar categorias:", err));
+    }, []);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
+        console.log("Dados do formulário:", data);
         const payload = {
             descricao: data.descricao,
             valor: parseFloat(data.valor),
-            receita: data.receita === 'receita',
+            receita: data.receita === 'true',
             categoria_id: parseInt(data.categoria_id)
         };
+        console.log("Payload enviado:", payload);
         try{
             const response = await fetch('http://localhost:8000/api/transacoes', {
                 method: 'POST',
@@ -38,9 +49,14 @@ return (
             <option value="false">Gasto</option>
             <option value="true">Receita</option>
         </select>
-        <select name="categoria" required>
-            <option value="false">Categoria1</option>
-            <option value="true">Categoria2</option>
+        <select name="categoria_id" required>
+            <option value="">Selecione uma categoria</option>
+            {categorias.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                    {cat.nome}
+                </option>
+            ))}
+            
         </select>
 
         <button type="submit">Criar</button>

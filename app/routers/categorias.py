@@ -33,12 +33,18 @@ def deletar_categoria(categoria_id: int):
         
      
     
-@router.post("/adicionar_categoria")
-def criar_categoria(categoria: Categoria):
+@router.post("/api/adicionar_categoria")
+def criar_categoria_json(categoria: Categoria):
     with Session(engine) as session:
         session.add(categoria)
         session.commit()
         session.refresh(categoria)
     nome = categoria.nome
-    return {"mensagem": f"A categoria {nome} foi registrada!"}
-    
+    return categorias
+
+@router.get("/api/categorias")
+def listar_categorias_json():
+    with Session(engine) as session:
+        statement = select(Categoria)
+        categorias = session.exec(statement).all()
+        return categorias
