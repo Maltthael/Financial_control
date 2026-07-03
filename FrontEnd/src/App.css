@@ -1,3 +1,28 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #021742f6; 
+}
+
+
+.app-layout {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 250px; 
+    padding: 30px;
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+
+
+
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;

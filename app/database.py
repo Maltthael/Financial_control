@@ -1,5 +1,8 @@
 from sqlmodel import create_engine, SQLModel, Field, Relationship, Session
 from typing import List
+from pydantic import BaseModel
+
+
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
@@ -14,7 +17,9 @@ class Categoria(SQLModel, table=True):
     nome: str = Field(index=True, unique=True)
     transacoes: List["Transacao"] = Relationship(back_populates= "categoria")
 
-
+class LoginRequest(BaseModel):
+    email: str
+    senha: str
 
 
 class Transacao(SQLModel, table=True):
@@ -25,7 +30,11 @@ class Transacao(SQLModel, table=True):
     categoria_id: int | None = Field(default=None, foreign_key="categoria.id")
     categoria: Categoria | None = Relationship(back_populates="transacoes")
 
-
+class User(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    email: str
+    nome: str
+    senha: str
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
