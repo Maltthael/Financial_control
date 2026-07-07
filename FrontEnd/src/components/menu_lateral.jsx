@@ -31,6 +31,10 @@ function menu_lateral() {
                     <FaTags className="nav-icon" />
                     <span>Cadastro</span>
                 </Link>
+                <Link to="/login" className={`nav-link ${location.pathname === '/categorias' ? 'active' : ''}`}>
+                    <FaTags className="nav-icon" />
+                    <span>Login</span>
+                </Link>
             </nav>
         </aside>
     );

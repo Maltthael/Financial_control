@@ -3,7 +3,7 @@ from app.database import User, LoginRequest, get_session
 from app.core.security import hash_senha, verificar_senha
 from sqlmodel import Session, select
 from fastapi import APIRouter, HTTPException, Depends
-
+from app.core.auth_token import criar_token_acesso
 
 
 router = APIRouter(prefix="/auth")
@@ -41,4 +41,11 @@ def login(login_data: LoginRequest, session: Session = Depends(get_session)):
             status_code = 401,
             detail = "Email ou senha incorretos!"
         )
-    return {"mensagem": "Login realizado com sucesso !"}
+        
+    access_token = criar_token_acesso(data={"sub": usuario.id})
+    
+    return {
+        "message": "Login efetuado com sucesso !",
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
