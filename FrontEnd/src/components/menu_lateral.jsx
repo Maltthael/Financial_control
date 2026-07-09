@@ -11,7 +11,7 @@ function menu_lateral() {
                 <h2><FaChartPie style={{ marginRight: '10px'}}/></h2>
             </div>
             <nav className="sidebar-nav">
-                <Link to ="/" className={`nav-link $[location.pathname === '/'? 'active' : ''}`}>
+                <Link to ="/relatorio" className={`nav-link $[location.pathname === '/'? 'active' : ''}`}>
                     <FaExchangeAlt className="nav-icon"/>
                     <span>Resumo</span>
                 </Link>
