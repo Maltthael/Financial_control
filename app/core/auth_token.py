@@ -14,10 +14,13 @@ def criar_token_acesso(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def verificar_token(token: str = Security(security)):
+    print(f"TOKEN RECEBIDO: {token.credentials}")
     try:
         payload = jwt.decode(token.credentials, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
-    except jwt.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError as e:
+        print(f"ERRO DE VALIDAÇÃO: {e}")
         raise HTTPException(status_code=401, detail="Token expirado")
-    except jwt.InvalidTokenError:
+    except jwt.InvalidTokenError as e:
+        print(f"ERRO DE VALIDAÇÃO: {e}")
         raise HTTPException(status_code=401, detail="Token inválido")

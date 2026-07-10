@@ -4,27 +4,38 @@ import CadastroUser from './features/cadastro_user/CadastroForm';
 import Relatorio from './features/relatorio/Relatorio'
 import Login from './features/login_user/Login';
 import Menu_lateral from './components/menu_lateral';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
 import './App.css';
 import PrivateRoute from './features/login_user/privateroute';
+
+function LayoutComMenu(){
+  return (
+    <div className="app-layout">
+      <Menu_lateral />
+      <main className="main-content">
+        <Outlet/> {/* Agora ele vai reconhecer o Outlet */}
+      </main>
+    </div>
+  )
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="app-layout">
-        <Menu_lateral/>
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<PrivateRoute><TransacaoTable /></PrivateRoute>} />
-            <Route path="/relatorio" element={<Relatorio />} />
-            <Route path="/categorias" element={<CategoriaTable />} />
-            <Route path="/usuario" element={<CadastroUser/>} />
-            <Route path="/login" element={<Login />} />
-           
+      <Routes>
+        {/* --- ROTAS COM MENU --- */}
+        {/* 2. Corrigido de 'elements' para 'element' */}
+        <Route element={<LayoutComMenu />}> 
+          <Route path="/transacoes" element={<PrivateRoute><TransacaoTable /></PrivateRoute>} />
+          <Route path="/relatorio" element={<PrivateRoute><Relatorio /></PrivateRoute>} />
+          <Route path="/categorias" element={<PrivateRoute><CategoriaTable/></PrivateRoute>} />   
+        </Route>
 
-          </Routes>
-        </main>
-      </div>
+        {/* --- ROTAS SEM MENU --- */}
+        <Route path="/usuario" element={<CadastroUser/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/" element={<Login/>} />    
+      </Routes>
     </BrowserRouter>
   );
 }

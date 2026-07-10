@@ -4,7 +4,14 @@ import { useEffect, useState} from 'react';
 function TransacaoForm({ onClose, onSave, transacao}){
     const [categorias, setCategorias] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:8000/api/categorias')
+        const token = localStorage.getItem('token')
+        fetch('http://localhost:8000/api/categorias', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': `application/json`
+            }
+        })
         .then(res => res.json())
         .then(data => setCategorias(data))
         .catch(err => console.error("Erro ao buscar categorias:", err));
@@ -12,6 +19,7 @@ function TransacaoForm({ onClose, onSave, transacao}){
     
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('token');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
         
@@ -30,8 +38,12 @@ function TransacaoForm({ onClose, onSave, transacao}){
 
         try {
             const response = await fetch(url, {
+                
                 method: method,
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                },
                 body: JSON.stringify(payload)
             });
 

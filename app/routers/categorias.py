@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 from app.database import engine, Categoria
-
+from app.core.auth_token import verificar_token
 
 router = APIRouter()
 
@@ -43,7 +43,7 @@ def criar_categoria_json(categoria: Categoria):
     return categorias
 
 @router.get("/api/categorias")
-def listar_categorias_json():
+def listar_categorias_json(token_data: dict = Depends(verificar_token)):
     with Session(engine) as session:
         statement = select(Categoria)
         categorias = session.exec(statement).all()

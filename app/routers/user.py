@@ -42,7 +42,7 @@ def login(login_data: LoginRequest, session: Session = Depends(get_session)):
             detail = "Email ou senha incorretos!"
         )
         
-    access_token = criar_token_acesso(data={"sub": usuario.id})
+    access_token = criar_token_acesso(data={"sub": str(usuario.id)})
     
     return {
         "message": "Login efetuado com sucesso !",

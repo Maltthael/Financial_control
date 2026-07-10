@@ -18,7 +18,7 @@ class TransacaoUpdate(BaseModel):
 
     
 @router.delete("/api/transacoes/{transacao_id}")
-async def deletar_transacao(transacao_id: int):
+async def deletar_transacao(transacao_id: int, token_data: dict = Depends(verificar_token)):
         with Session(engine) as session:
             transacoes = session.get(Transacao, transacao_id)
             
@@ -30,7 +30,7 @@ async def deletar_transacao(transacao_id: int):
         return {"status:" "ok"}
     
 @router.put("/api/transacoes/editar/{transacao_id}") 
-async def salvar_editar(transacao_id: int, transacao_data: TransacaoUpdate):
+async def salvar_editar(transacao_id: int, transacao_data: TransacaoUpdate, token_data: dict = Depends(verificar_token)):
     with Session(engine) as session:
         transacao = session.get(Transacao, transacao_id)
         if not transacao:
@@ -49,7 +49,7 @@ async def salvar_editar(transacao_id: int, transacao_data: TransacaoUpdate):
 
     
 @router.post("/api/transacoes")
-def criar_transacao(transacao: Transacao):
+def criar_transacao(transacao: Transacao, token_data: dict = Depends(verificar_token)):
     with Session(engine) as session:
         session.add(transacao)
         session.commit()

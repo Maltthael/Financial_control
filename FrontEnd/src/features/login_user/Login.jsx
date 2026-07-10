@@ -19,9 +19,10 @@ function Login() {
         });
         if (response.ok){
             const data = await response.json();
-            login(data.acess_token);
+            localStorage.setItem('token', data.access_token);
+            login(data.access_token);
             alert('Login efetuado com sucesso!')
-            navigate('/dashboard');
+            window.location.href = "/transacoes";
         } else{
             alert('Falha ao logar. Verfique suas credenciais.')
         }

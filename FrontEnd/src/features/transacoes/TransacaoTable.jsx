@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import TransacaoForm from './TransacaoForm';
+import api from '../../services/api';
+
 
 function TransacaoTable() {
     const [transacoes, setTransacoes] = useState([]);
@@ -15,72 +17,43 @@ function TransacaoTable() {
         setIsModalOpen(true);
         console.log("botao clicado")
     }
-    const carregarTransacoes = () => {
-        const token = localStorage.getItem('token');
-        fetch('http://localhost:8000/api/transacoes', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+    const carregarTransacoes = async () => {
+        try {
+            const response = await api.get('/api/transacoes');
+            setTransacoes(response.data); // O Axios já converte para JSON automaticamente!
+        } catch (err) {
+            console.error("Erro ao buscar transações:", err);
+        }
+    };
+
+    const carregarCategorias = async () => {
+        try {
+            const response = await api.get('/api/categorias');
+            setCategorias(response.data);
+        } catch (err) {
+            console.error("Erro ao buscar categorias:", err);
+        }
+    };
+
+    const deletarTransacao = async (id) => {
+        if (window.confirm("Tem certeza que deseja deletar?")) {
+            try {
+                await api.delete(`/api/transacoes/${id}`);
+                carregarTransacoes(); // Atualiza a lista após deletar
+            } catch (err) {
+                console.error("Erro ao deletar:", err);
             }
-        })
-            .then(res => {
-                if (res.status === 401) {
-                    console.error("Não autorizado! Redirecionando para login...");
-                    window.location.href = "/login";
-                    return;
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (data) {
-                    console.log("Conteúdo da primeira transação:", data[15]);
-
-                    setTransacoes(data);
-                }
-            })
-            .catch(err => console.error("Erro ao buscar:", err))
+        }
     };
 
-
-
-
-
-    const carregarCategorias = () => {
-        fetch('http://localhost:8000/api/categorias')
-            .then(res => res.json())
-            .then(data => {
-                setCategorias(data);
-            })
-            .catch(err => console.error("Erro ao buscar categorias:", err));
-    };
-
-    const deletarTransacao = (id) => {
-        if (window.confirm("Tem certeza que deseja deletar a transação?"))
-            fetch(`http://localhost:8000/api/transacoes/${id}`, {
-                method: 'DELETE',
-            })
-                .then(() => {
-                    carregarTransacoes();
-                })
-                .catch(err => console.error("Erro ao deletar: ", err));
-    };
-
-    const salvarEdição = (id, dadosEditados) => {
-        fetch(`http://localhost:8000/api/transacoes/editar/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dadosEditados),
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log("Resposta do servidor:", data);
-                setIsModalOpen(false);
-                carregarTransacoes();
-            })
-            .catch(err => console.error("Erro ao editar: ", err));
+    const salvarEdição = async (id, dadosEditados) => {
+        try {
+            await api.put(`/api/transacoes/editar/${id}`, dadosEditados);
+            setIsModalOpen(false);
+            carregarTransacoes();
+        } catch (err) {
+            console.error("Erro ao editar:", err);
+        }
     };
 
     useEffect(() => {

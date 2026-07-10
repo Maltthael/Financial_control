@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import CategoriaForm from './CategoriaForm';
+import api from '../../services/api';
 import './CategoriaStyle.css';
 function CategoriasPage() {
     const [categorias, setCategorias] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const carregarCategorias = () => {
-        fetch('http://localhost:8000/api/categorias')
-            .then(res => res.json())
-            .then(data => setCategorias(data))
-            .catch(err => console.error("Erro ao carregar categorias:", err));
+    const carregarCategorias = async () => {
+        try {
+            const response = await api.get('/api/categorias');
+            setCategorias(response.data);
+        } catch (err) {
+            console.error("Erro ao buscar categorias:", err);
+        }
     };
 
     useEffect(() => {
@@ -19,10 +22,10 @@ function CategoriasPage() {
     return (
         <div style={{ padding: '20px' }}>
             <h1>Gerenciar Categorias</h1>
-            
-       
-            <button 
-                onClick={() => setIsModalOpen(true)} 
+
+
+            <button
+                onClick={() => setIsModalOpen(true)}
                 style={{ marginBottom: '20px', padding: '10px 15px', cursor: 'pointer' }}
             >
                 + Nova Categoria
@@ -35,13 +38,13 @@ function CategoriasPage() {
                 ))}
             </ul>
 
-            
+
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <CategoriaForm 
-                            onSave={carregarCategorias} 
-                            onClose={() => setIsModalOpen(false)} 
+                        <CategoriaForm
+                            onSave={carregarCategorias}
+                            onClose={() => setIsModalOpen(false)}
                         />
                     </div>
                 </div>
