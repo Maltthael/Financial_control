@@ -6,7 +6,7 @@ from app.database import Transacao, Categoria, get_session
 router = APIRouter(prefix="/api/relatorios", tags=["relatorios"])
 
 
-@router.get("/resumo")
+@router.get("/relatorio")
 def resumo_mensal(db: Session = Depends(get_session)):
     
     query_receitas = select(func.sum(Transacao.valor)).where(Transacao.receita == True)

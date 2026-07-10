@@ -26,6 +26,17 @@ function TransacaoTable(){
             .catch(err => console.error("Erro ao buscar categorias:", err));
     };
 
+    const deletarTransacao = (id) => {
+        if (window.confirm( "Tem certeza que deseja deletar a transação?"))
+            fetch(`http://localhost:8000/api/transacoes/${id}`,{
+            method: 'DELETE',
+        })
+        .then(() => {
+            carregarTransacoes();
+        })
+        .catch(err => console.error("Erro ao deletar: ", err));
+    };
+
     useEffect(() => {
         carregarTransacoes();
         carregarCategorias();
@@ -50,6 +61,7 @@ return (
                     <th>Valor</th>
                     <th>Categoria</th>
                     <th>Receita</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,6 +71,9 @@ return (
                         <td>{t.valor != null ? t.valor.toLocaleString('pt-BR', {style: 'currency', currency:'BRL'}) : 'R$ 0,00'}</td>
                         <td>{categorias.find(cat => cat.id === t.categoria_id)?.nome || "Sem Categoria"}</td>
                         <td className={t.receita ? 'receita' : 'gasto'}> {t.receita ? "Receita" : "Gasto"}</td>
+                        <td>
+                            <button onClick={() => deletarTransacao(t.id)}>Deletar</button>
+                        </td>
                     </tr>
                 ))}
             </tbody>

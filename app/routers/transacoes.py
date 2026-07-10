@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
@@ -33,16 +33,17 @@ def listar_transacoes(request: Request):
         }
     )
     
-@router.get("/transacoes/deletar/{transacao_id}")
+@router.delete("/api/transacoes/{transacao_id}")
 async def deletar_transacao(transacao_id: int):
         with Session(engine) as session:
             transacoes = session.get(Transacao, transacao_id)
             
-            if transacoes:
-                session.delete(transacoes)
-                session.commit()
+            if not transacoes:
+                raise HTTPException(status_code=404, detail="Transação não encontrada")
+            session.delete(transacoes)
+            session.commit()
                 
-        return RedirectResponse(url="/transacoes", status_code = 303)
+        return {"status:" "ok"}
     
 @router.get("/transacoes/editar/{transacao_id}") 
     
