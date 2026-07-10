@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request, Form, HTTPException
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
 from sqlmodel import Session, select
 from sqlalchemy.orm import joinedload
 from app.database import engine, Transacao, Categoria
@@ -8,30 +7,14 @@ from app.database import engine, Transacao, Categoria
 
 router = APIRouter()
 
-templates = Jinja2Templates(directory="templates")
+
+class TransacaoUpdate(BaseModel):
+    valor: float
+    descricao: str
+    receita: bool
+    categoria_id: int
 
 
-@router.get("/transacoes")
-def listar_transacoes(request: Request):
-    with Session(engine) as session:
-        statement = select(Transacao).options(joinedload(Transacao.categoria))
-        transacoes = session.exec(statement).all()
-        categorias = session.exec(select(Categoria)).all()
-        total_gasto = sum(t.valor for t in transacoes if not t.receita)
-        total_receita = sum(t.valor for t in transacoes if t.receita)
-        saldo_final = total_receita - total_gasto
-        
-    return templates.TemplateResponse(
-        request=request,
-        name="transacoes.html",
-        context={
-            "transacoes": transacoes,
-            "categorias": categorias,
-            "total_gasto": total_gasto,
-            "total_receita": total_receita,
-            "saldo_final": saldo_final
-        }
-    )
     
 @router.delete("/api/transacoes/{transacao_id}")
 async def deletar_transacao(transacao_id: int):
@@ -45,7 +28,24 @@ async def deletar_transacao(transacao_id: int):
                 
         return {"status:" "ok"}
     
-@router.get("/transacoes/editar/{transacao_id}") 
+@router.put("/api/transacoes/editar/{transacao_id}") 
+async def salvar_editar(transacao_id: int, transacao_data: TransacaoUpdate):
+    with Session(engine) as session:
+        transacao = session.get(Transacao, transacao_id)
+        if not transacao:
+            raise HTTPException(status_code=404, detail="Transação não encontrada")
+        transacao.valor = transacao_data.valor
+        transacao.descricao = transacao_data.descricao
+        transacao.receita = transacao_data.receita
+        transacao.categoria_id = transacao_data.categoria_id
+        
+        session.commit()
+        session.refresh(transacao)
+    return {"status": "success", "message": "Edição salva com sucesso!"}
+         
+
+
+
     
 @router.post("/api/transacoes")
 def criar_transacao(transacao: Transacao):
