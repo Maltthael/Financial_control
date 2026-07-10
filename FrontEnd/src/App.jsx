@@ -6,6 +6,7 @@ import Login from './features/login_user/Login';
 import Menu_lateral from './components/menu_lateral';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
+import PrivateRoute from './features/login_user/privateroute';
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         <Menu_lateral/>
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<TransacaoTable />} />
+            <Route path="/" element={<PrivateRoute><TransacaoTable /></PrivateRoute>} />
             <Route path="/relatorio" element={<Relatorio />} />
             <Route path="/categorias" element={<CategoriaTable />} />
             <Route path="/usuario" element={<CadastroUser/>} />

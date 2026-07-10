@@ -16,15 +16,35 @@ function TransacaoTable() {
         console.log("botao clicado")
     }
     const carregarTransacoes = () => {
-        fetch('http://localhost:8000/api/transacoes')
-            .then(res => res.json())
-            .then(data => {
-                console.log("Conteúdo da primeira transação:", data[15]);
-
-                setTransacoes(data);
+        const token = localStorage.getItem('token');
+        fetch('http://localhost:8000/api/transacoes', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => {
+                if (res.status === 401) {
+                    console.error("Não autorizado! Redirecionando para login...");
+                    window.location.href = "/login";
+                    return;
+                }
+                return res.json();
             })
-            .catch(err => console.error("Erro ao buscar:", err));
+            .then(data => {
+                if (data) {
+                    console.log("Conteúdo da primeira transação:", data[15]);
+
+                    setTransacoes(data);
+                }
+            })
+            .catch(err => console.error("Erro ao buscar:", err))
     };
+
+
+
+
 
     const carregarCategorias = () => {
         fetch('http://localhost:8000/api/categorias')
@@ -75,7 +95,7 @@ function TransacaoTable() {
             <button onClick={() => setIsModalOpen(true)}>Nova transação</button>
             {isModalOpen && (
                 <TransacaoForm
-                    transacao={transacaoParaEditar} 
+                    transacao={transacaoParaEditar}
                     onClose={() => {
                         setIsModalOpen(false);
                         setTransacaoParaEditar(null);

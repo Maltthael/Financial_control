@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request, Form, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from sqlmodel import Session, select
 from sqlalchemy.orm import joinedload
 from app.database import engine, Transacao, Categoria
+from app.core.auth_token import verificar_token
 
 
 router = APIRouter()
@@ -76,7 +77,7 @@ def exibir_gastos():
 
 
 @router.get("/api/transacoes")
-def listar_transacoes_json():
+def listar_transacoes_json(token_data: dict = Depends(verificar_token)):
     with Session(engine) as session:
         statement = select(Transacao).options(joinedload(Transacao.categoria))
         transacoes = session.exec(statement).all()
