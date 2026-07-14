@@ -1,5 +1,5 @@
 import { useAuth } from './AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
 function Login() {
@@ -50,6 +50,8 @@ function Login() {
                     required 
                 />
                 <button type="submit">Entrar</button>
+                <br />
+                <Link to="/usuario">Não possui uma conta?</Link>
             </form>
         </div>
     );

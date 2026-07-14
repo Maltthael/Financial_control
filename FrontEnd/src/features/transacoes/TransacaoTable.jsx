@@ -20,7 +20,7 @@ function TransacaoTable() {
     const carregarTransacoes = async () => {
         try {
             const response = await api.get('/api/transacoes');
-            setTransacoes(response.data); // O Axios já converte para JSON automaticamente!
+            setTransacoes(response.data); 
         } catch (err) {
             console.error("Erro ao buscar transações:", err);
         }
@@ -39,7 +39,7 @@ function TransacaoTable() {
         if (window.confirm("Tem certeza que deseja deletar?")) {
             try {
                 await api.delete(`/api/transacoes/${id}`);
-                carregarTransacoes(); // Atualiza a lista após deletar
+                carregarTransacoes(); 
             } catch (err) {
                 console.error("Erro ao deletar:", err);
             }

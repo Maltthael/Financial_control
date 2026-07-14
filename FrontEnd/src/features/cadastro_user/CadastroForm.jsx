@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 function CadastroUser() {
     const [nome, setNome] = useState('');
@@ -36,7 +38,11 @@ function CadastroUser() {
             <input type="email" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} required />
             <input type="password" placeholder='Senha' value={senha} onChange={(e) => setSenha(e.target.value)} required />
             <button type='submit'>Cadastrar</button>
+            <br/>
+            <Link to="/login">Já possui uma conta?</Link>
         </form>
+    
+
     );
 }
 

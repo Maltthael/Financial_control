@@ -4,7 +4,6 @@ function CategoriaForm({ onClose, onSave }) {
     const [nome, setNome] = useState('');
     const [erro, setErro] = useState('');
 
-    // 1. O 'async' fica aqui na declaração da função
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErro('');

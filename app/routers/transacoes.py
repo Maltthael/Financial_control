@@ -14,13 +14,24 @@ class TransacaoUpdate(BaseModel):
     descricao: str
     receita: bool
     categoria_id: int
+    
+class TransacaoCreate(BaseModel):
+    descricao: str
+    valor: float
+    receita: bool
+    categoria_id: int
 
 
     
 @router.delete("/api/transacoes/{transacao_id}")
 async def deletar_transacao(transacao_id: int, token_data: dict = Depends(verificar_token)):
+        user_id = int(token_data["sub"])
         with Session(engine) as session:
-            transacoes = session.get(Transacao, transacao_id)
+            statement = select(Transacao).where(
+                Transacao.id == transacao_id,
+                Transacao.user_id == user_id
+            )
+            transacoes = session.exec(statement).first()
             
             if not transacoes:
                 raise HTTPException(status_code=404, detail="Transação não encontrada")
@@ -31,10 +42,14 @@ async def deletar_transacao(transacao_id: int, token_data: dict = Depends(verifi
     
 @router.put("/api/transacoes/editar/{transacao_id}") 
 async def salvar_editar(transacao_id: int, transacao_data: TransacaoUpdate, token_data: dict = Depends(verificar_token)):
+    user_id = int(token_data["sub"])
     with Session(engine) as session:
-        transacao = session.get(Transacao, transacao_id)
+        statement = select(Transacao).where(Transacao.id == transacao_id, Transacao.user_id == user_id)
+        transacao = session.exec(statement).first()
+        
         if not transacao:
             raise HTTPException(status_code=404, detail="Transação não encontrada")
+        
         transacao.valor = transacao_data.valor
         transacao.descricao = transacao_data.descricao
         transacao.receita = transacao_data.receita
@@ -49,36 +64,42 @@ async def salvar_editar(transacao_id: int, transacao_data: TransacaoUpdate, toke
 
     
 @router.post("/api/transacoes")
-def criar_transacao(transacao: Transacao, token_data: dict = Depends(verificar_token)):
+def criar_transacao(data: TransacaoCreate, token_data: dict = Depends(verificar_token)):
+    user_id = int(token_data["sub"])
     with Session(engine) as session:
-        session.add(transacao)
+        nova_transacao = Transacao(
+            **data.model_dump(),
+            user_id = user_id
+        )
+        session.add(nova_transacao)
         session.commit()
-        session.refresh(transacao)
+        session.refresh(nova_transacao)
     
-    return transacao
+    return nova_transacao
 
 
 
 @router.get("/exibir_receitas")
-def exibir_receitas():
+def exibir_receitas(token_data: dict = Depends):
+     user_id = int(token_data["sub"])
      with Session(engine) as session:
-         comando = select(Transacao) .where(Transacao.receita == True)
-         receitas = session.exec(comando).all()
-     return receitas
+         comando = select(Transacao) .where(Transacao.receita == True, Transacao.user_id == user_id)
+     return session.exec(comando).all()
 
 
 @router.get("/exibir_gastos")
-def exibir_gastos():
+def exibir_gastos(token_data: dict = Depends(verificar_token)):
+    user_id = int(token_data["sub"])
     with Session(engine) as session:
-         comando = select(Transacao) .where(Transacao.receita == False)
-         gastos = session.exec(comando).all()
-    return gastos
+         comando = select(Transacao) .where(Transacao.receita == False, Transacao.user_id == user_id)
+    return session.exec(comando).all()
 
 
 
 @router.get("/api/transacoes")
 def listar_transacoes_json(token_data: dict = Depends(verificar_token)):
+    user_id = int(token_data["sub"])
     with Session(engine) as session:
-        statement = select(Transacao).options(joinedload(Transacao.categoria))
+        statement = select(Transacao).where(Transacao.user_id == user_id).options(joinedload(Transacao.categoria))
         transacoes = session.exec(statement).all()
         return transacoes

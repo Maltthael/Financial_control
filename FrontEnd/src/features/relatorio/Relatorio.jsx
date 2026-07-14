@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { PieChart, Pie, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PDFDocumento from './PDF/RelatorioPDF';
+import api from '../../services/api';
 
 function Relatorio(){   
     const [dados, setDados] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/relatorios/relatorio')  
-            .then(res => res.json())
-            .then(data => setDados(data));
+        api.get('/api/relatorios/relatorio') 
+        .then(res => setDados(res.data))
+        .catch(err => console.error("Erro ao buscar relatório:", err));
             
     
     }, []);

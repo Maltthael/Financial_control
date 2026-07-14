@@ -1,6 +1,8 @@
 from sqlmodel import create_engine, SQLModel, Field, Relationship, Session
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
+from datetime import datetime
+from sqlalchemy import func
 
 
 sqlite_file_name = "database.db"
@@ -15,6 +17,8 @@ def get_session():
 class Categoria(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nome: str = Field(index=True, unique=True)
+    user_id: int = Field(foreign_key="user.id")
+    user: User = Relationship(back_populates="categorias")
     transacoes: List["Transacao"] = Relationship(back_populates= "categoria")
 
 class LoginRequest(BaseModel):
@@ -29,12 +33,20 @@ class Transacao(SQLModel, table=True):
     receita: bool
     categoria_id: int | None = Field(default=None, foreign_key="categoria.id")
     categoria: Categoria | None = Relationship(back_populates="transacoes")
+    user_id: int = Field(foreign_key="user.id")
+    user: User = Relationship(back_populates="transacoes")
+    data_criacao: datetime = Field(
+        default_factory=datetime.utcnow,
+        nullable = False
+    )
 
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     email: str
     nome: str
     senha: str
+    transacoes: List["Transacao"] = Relationship(back_populates="user")
+    categorias: List["Categoria"] = Relationship(back_populates="user")
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
