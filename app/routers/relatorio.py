@@ -24,8 +24,8 @@ def resumo_mensal(session: Session = Depends(get_session), token_data: dict = De
         )
     total_despesas = session.exec(query_despesas).one() or 0.0
     
-    return {"total de receita": total_receitas,
-            "total de despesas": total_despesas,
-            "saldo total": total_receitas - total_despesas
+    return {"total de receita": round(total_receitas),
+            "total de despesas": round(total_despesas),
+            "saldo total": round(total_receitas - total_despesas)
             }
     

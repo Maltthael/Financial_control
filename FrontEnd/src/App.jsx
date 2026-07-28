@@ -3,6 +3,7 @@ import CategoriaTable from './features/categorias/CategoriaTable';
 import CadastroUser from './features/cadastro_user/CadastroForm';
 import Relatorio from './features/relatorio/Relatorio'
 import Login from './features/login_user/Login';
+import Perfil from './features/perfil_usuario/Perfil'
 import Menu_lateral from './components/menu_lateral';
 import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
 import './App.css';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/transacoes" element={<PrivateRoute><TransacaoTable /></PrivateRoute>} />
           <Route path="/relatorio" element={<PrivateRoute><Relatorio /></PrivateRoute>} />
           <Route path="/categorias" element={<PrivateRoute><CategoriaTable/></PrivateRoute>} />   
+          <Route path="/perfil" element={<PrivateRoute><Perfil/></PrivateRoute>} />  
         </Route>
 
         {/* --- ROTAS SEM MENU --- */}

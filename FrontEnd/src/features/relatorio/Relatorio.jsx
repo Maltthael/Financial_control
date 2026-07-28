@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
-import { PieChart, Pie, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from 'recharts';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PDFDocumento from './PDF/RelatorioPDF';
 import api from '../../services/api';
 
-function Relatorio(){   
+function Relatorio() {
     const [dados, setDados] = useState([]);
+    const getCorBarra = (nome, valor) => {
+        if (nome === 'Saldo') return valor >= 0 ? '#0000FF' : '#FF0000';
+        if (nome === 'Despesas') return '#FF0000';
+        return '#2bff00';
+    };
 
     useEffect(() => {
-        api.get('/api/relatorios/relatorio') 
-        .then(res => setDados(res.data))
-        .catch(err => console.error("Erro ao buscar relatório:", err));
-            
-    
+        api.get('/api/relatorios/relatorio')
+            .then(res => setDados(res.data))
+            .catch(err => console.error("Erro ao buscar relatório:", err));
+
+
     }, []);
     if (!dados) return <p>Carregando dados...</p>;
     const dadosGrafico = [
@@ -21,7 +26,7 @@ function Relatorio(){
         { name: 'Saldo', valor: dados['saldo total'] }
     ];
 
-    return(
+    return (
         <div>
             {/* Grafico pizza*/}
 
@@ -38,23 +43,33 @@ function Relatorio(){
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={dadosGrafico}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" /> 
+                    <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip />
-                 
-                    <Bar dataKey="valor" fill="#ff0000" /> 
+                    <Tooltip
+                        formatter={(value) =>
+                            value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        }
+                    />
+
+                    <Bar dataKey="valor">
+                        {dadosGrafico.map((entry, index) => (
+                            <Cell 
+                                key = {'cell-${index}'}
+                                fill = {getCorBarra(entry.name, entry.valor)} />
+                        ))}
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
-         
+
             <PDFDownloadLink document={<PDFDocumento data={dados} />} fileName="relatorio.pdf">
                 {({ loading }) => loading ? 'Preparando...' : 'Download PDF'}
             </PDFDownloadLink>
         </div>
-        
+
     )
 
 
 }
 
 
-    export default Relatorio;
+export default Relatorio;

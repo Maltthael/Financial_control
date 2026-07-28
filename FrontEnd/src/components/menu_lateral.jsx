@@ -1,14 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FaExchangeAlt, FaTags, FaChartPie } from 'react-icons/fa';
+import { FaExchangeAlt, FaTags, FaChartPie, FaUser, FaCog } from 'react-icons/fa';
 import { useAuth } from '../features/login_user/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 import './menu_lateral.css';
 
-function menu_lateral() {
+function MenuLateral() {
     const location = useLocation();
     const { logout } = useAuth();
     const navigate = useNavigate();
+    
     const handleLogout = () => {
         logout();
         navigate('/login');
@@ -20,22 +21,32 @@ function menu_lateral() {
                 <h2><FaChartPie style={{ marginRight: '10px' }} /></h2>
             </div>
             <nav className="sidebar-nav">
-                <Link to="/relatorio" className={`nav-link $[location.pathname === '/'? 'active' : ''}`}>
+                <Link to="/relatorio" className={`nav-link ${location.pathname === '/relatorio' ? 'active' : ''}`}>
                     <FaExchangeAlt className="nav-icon" />
                     <span>Resumo</span>
                 </Link>
-                <Link to="/transacoes" className={`nav-link $[location.pathname === '/'? 'active' : ''}`}>
+                
+                <Link to="/transacoes" className={`nav-link ${location.pathname === '/transacoes' ? 'active' : ''}`}>
                     <FaExchangeAlt className="nav-icon" />
                     <span>Transações</span>
                 </Link>
+                
                 <Link to="/categorias" className={`nav-link ${location.pathname === '/categorias' ? 'active' : ''}`}>
                     <FaTags className="nav-icon" />
                     <span>Categorias</span>
                 </Link>
-                <Link to="/categorias" className={`nav-link ${location.pathname === '/categorias' ? 'active' : ''}`}>
-                    <FaTags className="nav-icon" />
+                
+                <Link to="/configuracoes" className={`nav-link ${location.pathname === '/configuracoes' ? 'active' : ''}`}>
+                    <FaCog className="nav-icon" />
                     <span>Configurações</span>
                 </Link>
+                
+               
+                <Link to="/Perfil" className={`nav-link ${location.pathname === '/perfil' ? 'active' : ''}`}>
+                    <FaUser className="nav-icon" />
+                    <span>Perfil</span>
+                </Link>
+                
                 <button onClick={handleLogout} className="btn-sair">
                     Sair
                 </button>
@@ -43,4 +54,5 @@ function menu_lateral() {
         </aside>
     );
 }
-export default menu_lateral
+
+export default MenuLateral;
