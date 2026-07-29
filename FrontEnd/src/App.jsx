@@ -14,7 +14,7 @@ function LayoutComMenu(){
     <div className="app-layout">
       <Menu_lateral />
       <main className="main-content">
-        <Outlet/> {/* Agora ele vai reconhecer o Outlet */}
+        <Outlet/> 
       </main>
     </div>
   )
@@ -24,8 +24,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* --- ROTAS COM MENU --- */}
-        {/* 2. Corrigido de 'elements' para 'element' */}
+   
         <Route element={<LayoutComMenu />}> 
           <Route path="/transacoes" element={<PrivateRoute><TransacaoTable /></PrivateRoute>} />
           <Route path="/relatorio" element={<PrivateRoute><Relatorio /></PrivateRoute>} />

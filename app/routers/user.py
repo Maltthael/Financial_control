@@ -43,8 +43,14 @@ def login(login_data: LoginRequest, session: Session = Depends(get_session)):
             status_code=401,
             detail="Email ou senha incorretos!"
         )
+    if getattr(usuario, "is_2fa_enabled", False) and usuario.secret_2fa:
+        return {
+            "require_2fa": True,
+            "message": "Credenciais válidas. Insira o código do 2FA para prosseguir."
+        }
     
-    # Gera o token de acesso para todos, já que o 2FA é opcional no login
+    
+    
     access_token = criar_token_acesso(data={"sub": str(usuario.id)})
     
     return {
