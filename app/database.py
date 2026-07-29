@@ -49,6 +49,7 @@ class User(SQLModel, table=True):
     categorias: List["Categoria"] = Relationship(back_populates="user")
     secret_2fa: Optional[str] = Field(default=None)
     is_2fa_enabled: bool = Field(default=False)
+    backup_codes: Optional[str] = None 
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)

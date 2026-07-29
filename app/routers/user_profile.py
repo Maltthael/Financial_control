@@ -2,13 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-import pyotp
-import time
-import qrcode
-import io
-import base64
+import pyotp, base64, secrets, string, time, qrcode, io
 from app.database import User, get_session
-from app.core.security import get_current_user, verificar_senha
+from app.core.security import get_current_user, verificar_senha, gerar_codigos_backup
 from app.core.auth_token import criar_token_acesso
 from app.schemas import Disable2FASchema
 
@@ -88,9 +84,12 @@ def verify_setup_2fa(data: Verify2FASchema, session: Session = Depends(get_sessi
     
     if totp.verify(data.token):
         current_user.is_2fa_enabled = True
+        lista_codigos = gerar_codigos_backup()
+        current_user.backup_codes = ",".join(lista_codigos)
         session.add(current_user)
         session.commit()
-        return {"message": "2FA ativado com sucesso !"}
+        return {"message": "2FA ativado com sucesso !",
+                "backup_codes": lista_codigos}
         
     raise HTTPException(status_code=400, detail="Código invalido. Tente novamente.")
 

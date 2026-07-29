@@ -7,6 +7,7 @@ export default function Perfil() {
     const [dados2FA, setDados2FA] = useState(null);
     const [tokenDigitado, setTokenDigitado] = useState("");
     const [senhaAtual, setSenhaAtual] = useState("");
+    const [backupCodes, setBackupCodes] = useState("");
 
     useEffect(() => {
         api.get("/perfil/")
@@ -28,8 +29,8 @@ export default function Perfil() {
         e.preventDefault();
         try {
             const response = await api.post("/perfil/verify-setup-2fa", { token: tokenDigitado });
+            setBackupCodes(response.data.backup_codes);
             alert(response.data.message);
-            window.location.reload();
         } catch (error) {
             console.error("Detalhe exato do erro:", error.response?.data);
             alert("Erro: " + (error.response?.data?.detail || "Código inválido"));
@@ -80,6 +81,27 @@ export default function Perfil() {
                         />
                         <button type="submit">Confirmar Ativação</button>
                     </form>
+                </div>
+            )}
+            {backupCodes.length > 0 && (
+                <div className="area-backup-codes">
+                    <h3>⚠️ Guarde seus Códigos de Recuperação!</h3>
+                    <p>Estes códigos permitem que você acesse sua conta caso perca o acesso ao seu aplicativo autenticador. <strong>Eles não serão exibidos novamente.</strong></p>
+
+                    <ul>
+                        {backupCodes.map((code, index) => (
+                            <li key={index}>
+                                {code}
+                            </li>
+                        ))}
+                    </ul>
+
+                    <button
+                        className="btn-continuar-backup"
+                        onClick={() => window.location.reload()}
+                    >
+                        Já salvei os códigos, continuar
+                    </button>
                 </div>
             )}
             {usuario.is_2fa_enabled && (

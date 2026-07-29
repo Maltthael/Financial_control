@@ -1,3 +1,4 @@
+import secrets, string
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -37,3 +38,10 @@ def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Dep
         raise credentials_exception
     
     return user
+def gerar_codigos_backup(quantidade = 5, tamanho = 8):
+    alfabeto = string.ascii_uppercase + string.digits
+    codigos = []
+    for _ in range(quantidade):
+        codigo = "".join(secrets.choice(alfabeto) for _ in range(tamanho))
+        codigos.append(codigo)
+    return codigos
