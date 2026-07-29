@@ -8,8 +8,9 @@ import qrcode
 import io
 import base64
 from app.database import User, get_session
-from app.core.security import get_current_user
+from app.core.security import get_current_user, verificar_senha
 from app.core.auth_token import criar_token_acesso
+from app.schemas import Disable2FASchema
 
 router = APIRouter(prefix='/perfil', tags=["Perfil e 2FA"])
 
@@ -92,3 +93,28 @@ def verify_setup_2fa(data: Verify2FASchema, session: Session = Depends(get_sessi
         return {"message": "2FA ativado com sucesso !"}
         
     raise HTTPException(status_code=400, detail="Código invalido. Tente novamente.")
+
+@router.post("/disable-2fa")
+def disable_2fa(
+    data: Disable2FASchema,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    if not current_user.is_2fa_enabled:
+        raise HTTPException(
+            status_code=400,
+            detail="O 2FA não está ativado nesta conta."
+        )
+    if not verificar_senha(data.current_password, current_user.senha):
+        raise HTTPException(
+            status_code=400,
+            detail="Senha incorreta. Tente novamente"
+        )
+        
+    current_user.secret_2fa = None
+    current_user.is_2fa_enabled = False
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    
+    return{"message": "Autenticação de dois fatores desativada com sucesso !"}

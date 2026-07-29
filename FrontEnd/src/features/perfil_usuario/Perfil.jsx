@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import api from "../../services/api"; 
+import api from "../../services/api";
 import "./perfil.css";
 
 export default function Perfil() {
     const [usuario, setUsuario] = useState({ nome: "", email: "", is_2fa_enabled: false });
-    const [dados2FA, setDados2FA] = useState(null); 
+    const [dados2FA, setDados2FA] = useState(null);
     const [tokenDigitado, setTokenDigitado] = useState("");
+    const [senhaAtual, setSenhaAtual] = useState("");
 
     useEffect(() => {
         api.get("/perfil/")
@@ -34,10 +35,21 @@ export default function Perfil() {
             alert("Erro: " + (error.response?.data?.detail || "Código inválido"));
         }
     };
+    const handleDisable2FA = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await api.post("/perfil/disable-2fa", { current_password: senhaAtual });
+            alert(response.data.message);
+            window.location.reload();
+        } catch (error) {
+            console.error("Erro ao desativar 2FA:", error.response?.data);
+            alert("Erro: " + (error.response?.data?.detail || "Erro ao desativar 2FA"));
+        }
+    };
     return (
         <div className="perfil-container">
             <h1>Meu Perfil</h1>
-            
+
             <div className="perfil-info">
                 <p><strong>Nome:</strong> {usuario.nome || "Carregando..."}</p>
                 <p><strong>E-mail:</strong> {usuario.email || "Carregando..."}</p>
@@ -67,6 +79,16 @@ export default function Perfil() {
                             placeholder="123456"
                         />
                         <button type="submit">Confirmar Ativação</button>
+                    </form>
+                </div>
+            )}
+            {usuario.is_2fa_enabled && (
+                <div className="area-disable-2fa">
+                    <p>O 2FA está ativado na sua conta. Deseja desativá-lo</p>
+                    <form onSubmit={handleDisable2FA}>
+                        <input type="password" value={senhaAtual} onChange={(e) => setSenhaAtual(e.target.value)}
+                            placeholder="Digite sua senha atual" required />
+                        <button type="submit">Desativar 2FA</button>
                     </form>
                 </div>
             )}
