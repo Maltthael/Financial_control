@@ -1,0 +1,138 @@
+.perfil-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333333;
+}
+
+.perfil-container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #1a1a1a;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.perfil-container h2 {
+  font-size: 18px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.perfil-info {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.perfil-info p {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+.area-2fa {
+  background-color: #f0f4f8;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 1px dashed #cbd5e1;
+}
+
+.area-2fa img {
+  display: block;
+  margin: 15px 0;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 5px;
+}
+
+.perfil-container input[type="text"] {
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  width: 150px;
+  margin-right: 10px;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.perfil-container input[type="text"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.perfil-container button {
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.perfil-container button:hover {
+  background-color: #1d4ed8;
+}
+
+.perfil-container hr {
+  border: 0;
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 25px 0;
+}
+
+.area-2fa {
+    margin-top: 15px;
+}
+
+.area-2fa img {
+    width: 180px;
+}
+
+.area-2fa form {
+    margin-top: 15px;
+}
+
+.area-backup-codes {
+    margin-top: 20px;
+    padding: 15px;
+    border: 2px dashed #ff4d4d;
+    border-radius: 8px;
+}
+
+.area-backup-codes li {
+    font-family: monospace;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.btn-continuar-backup {
+    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.area-disable-2fa {
+    margin-top: 20px;
+}
+
+.btn-desativar-2fa {
+    background-color: #ff4d4d;
+    color: white;
+}

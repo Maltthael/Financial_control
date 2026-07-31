@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from app.routers import transacoes, categorias, relatorio, user
+from app.routers import transacoes, categorias, relatorio, user, user_profile
 from fastapi.templating import Jinja2Templates
 from app.database import create_db_and_tables
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +23,7 @@ app.include_router(user.router)
 app.include_router(transacoes.router)
 app.include_router(categorias.router)
 app.include_router(relatorio.router)
+app.include_router(user_profile.router)
 
 templates = Jinja2Templates(directory="templates")
 

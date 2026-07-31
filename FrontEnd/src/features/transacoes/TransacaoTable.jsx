@@ -15,7 +15,6 @@ function TransacaoTable() {
     const iniciarEdicao = (transacao) => {
         setTransacaoParaEditar(transacao)
         setIsModalOpen(true);
-        console.log("botao clicado")
     }
     const carregarTransacoes = async () => {
         try {

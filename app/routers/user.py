@@ -1,9 +1,11 @@
-from fastapi import APIRouter
+
+import pyotp
 from app.database import User, LoginRequest, get_session
 from app.core.security import hash_senha, verificar_senha
 from sqlmodel import Session, select
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Body
 from app.core.auth_token import criar_token_acesso
+from app.schemas import Login2FASchema
 
 
 router = APIRouter(prefix="/auth")
@@ -38,14 +40,39 @@ def login(login_data: LoginRequest, session: Session = Depends(get_session)):
     
     if not usuario or not verificar_senha(login_data.senha, usuario.senha):
         raise HTTPException(
-            status_code = 401,
-            detail = "Email ou senha incorretos!"
+            status_code=401,
+            detail="Email ou senha incorretos!"
         )
-        
+    if getattr(usuario, "is_2fa_enabled", False) and usuario.secret_2fa:
+        return {
+            "require_2fa": True,
+            "message": "Credenciais válidas. Insira o código do 2FA para prosseguir."
+        }
+    
+    
+    
     access_token = criar_token_acesso(data={"sub": str(usuario.id)})
     
     return {
-        "message": "Login efetuado com sucesso !",
+        "message": "Login efetuado com sucesso!",
         "access_token": access_token,
         "token_type": "bearer"
     }
+    
+@router.post("/login-2fa", response_model=None)
+def login_2fa(data: Login2FASchema, session: Session = Depends(get_session)):
+    statement = select(User).where(User.email == data.email)
+    usuario = session.exec(statement).first()
+    
+    if not usuario or not usuario.is_2fa_enabled or not usuario.secret_2fa:
+        raise HTTPException(status_code = 400, detail = "Operação invalida.")   
+    
+    totp = pyotp.TOTP(usuario.secret_2fa)
+    if totp.verify(data.token):
+        access_token = criar_token_acesso(data={"sub": str(usuario.id)})
+        return {
+            "message": "Autenticação de dois fatores bem-sucedida!",
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
+    raise HTTPException(status_code=401, detail="Codigo 2FA inválido ou expirado.")
