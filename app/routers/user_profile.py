@@ -6,7 +6,7 @@ import pyotp, base64, secrets, string, time, qrcode, io
 from app.database import User, get_session
 from app.core.security import get_current_user, verificar_senha, gerar_codigos_backup
 from app.core.auth_token import criar_token_acesso
-from app.schemas import Disable2FASchema
+from app.schemas import Disable2FASchema, Disable2FABackupSchema
 
 router = APIRouter(prefix='/perfil', tags=["Perfil e 2FA"])
 
@@ -109,11 +109,50 @@ def disable_2fa(
             status_code=400,
             detail="Senha incorreta. Tente novamente"
         )
-        
+    totp = pyotp.TOTP(current_user.secret_2fa)
+    if not totp.verify(data.token):
+        raise HTTPException(
+            status_code=400, detail="Código 2FA inválido. Tente novamente."
+        )
+    
     current_user.secret_2fa = None
     current_user.is_2fa_enabled = False
+    current_user.backup_codes = None
     session.add(current_user)
     session.commit()
     session.refresh(current_user)
     
     return{"message": "Autenticação de dois fatores desativada com sucesso !"}
+
+
+@router.post("/disable-2fa-backup")
+def disable_2fa_backup(
+    data: Disable2FABackupSchema,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    if not current_user.is_2fa_enabled:
+        raise HTTPException(
+            status_code=400,
+            detail="O 2FA não está ativado nesta conta."
+        )
+        
+    codigos_lista = current_user.backup_codes.split(",") if current_user.backup_codes else []
+    
+    if data.backup_code not in codigos_lista:
+        raise HTTPException(
+            status_code=400,
+            detail="Código de backup inválido ou já utilizado."
+        )
+        
+    codigos_lista.remove(data.backup_code)
+    
+    current_user.backup_codes = ",".join(codigos_lista) if codigos_lista else None
+    current_user.secret_2fa = None
+    current_user.is_2fa_enabled = False
+    
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    
+    return {"message": "2FA desativado com sucesso usando o código de backup."}

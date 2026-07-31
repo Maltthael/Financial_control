@@ -45,3 +45,4 @@ def gerar_codigos_backup(quantidade = 5, tamanho = 8):
         codigo = "".join(secrets.choice(alfabeto) for _ in range(tamanho))
         codigos.append(codigo)
     return codigos
+

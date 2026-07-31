@@ -8,6 +8,7 @@ export default function Perfil() {
     const [tokenDigitado, setTokenDigitado] = useState("");
     const [senhaAtual, setSenhaAtual] = useState("");
     const [backupCodes, setBackupCodes] = useState("");
+    const [backupCodeDigitado, setBackupCodeDigitado] = useState("");
 
     useEffect(() => {
         api.get("/perfil/")
@@ -39,7 +40,8 @@ export default function Perfil() {
     const handleDisable2FA = async (e) => {
         e.preventDefault();
         try {
-            const response = await api.post("/perfil/disable-2fa", { current_password: senhaAtual });
+            const response = await api.post("/perfil/disable-2fa", { current_password: senhaAtual, token: tokenDigitado});
+            
             alert(response.data.message);
             window.location.reload();
         } catch (error) {
@@ -47,6 +49,21 @@ export default function Perfil() {
             alert("Erro: " + (error.response?.data?.detail || "Erro ao desativar 2FA"));
         }
     };
+
+    const handleDisable2FABackup = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await api.post("/perfil/disable-2fa-backup", {
+                current_password: senhaAtual,
+                backup_code: backupCodeDigitado
+            });
+            alert(response.data.message);
+            window.location.reload();
+        } catch (error) {
+            console.error("Erro ao desativar 2FA com backup:", error.response?.data);
+            alert("Erro: " + (error.response?.data?.detail || "Erro ao desativar 2FA"));
+        }
+    }
     return (
         <div className="perfil-container">
             <h1>Meu Perfil</h1>
@@ -106,11 +123,41 @@ export default function Perfil() {
             )}
             {usuario.is_2fa_enabled && (
                 <div className="area-disable-2fa">
-                    <p>O 2FA está ativado na sua conta. Deseja desativá-lo</p>
-                    <form onSubmit={handleDisable2FA}>
-                        <input type="password" value={senhaAtual} onChange={(e) => setSenhaAtual(e.target.value)}
-                            placeholder="Digite sua senha atual" required />
+                    <p>O 2FA está ativado na sua conta. Deseja desativá-lo?</p>
+
+                    {/* Opção 1: Desativar com senha normal */}
+                    <form onSubmit={handleDisable2FA} style={{ marginBottom: "20px" }}>
+                        <p><strong>Via Aplicativo Authenticator:</strong></p>
+                        <input
+                            type="password"
+                            value={senhaAtual}
+                            onChange={(e) => setSenhaAtual(e.target.value)}
+                            placeholder="Digite sua senha atual"
+                            required
+                        />
+                        <input
+                            type="password"
+                            value={tokenDigitado}
+                            onChange={(e) => setTokenDigitado(e.target.value)}
+                            placeholder="Digite o token"
+                            required
+                        />
                         <button type="submit">Desativar 2FA</button>
+                    </form>
+
+                    <hr />
+
+                    <form onSubmit={handleDisable2FABackup}>
+                        <p><strong>Perdeu o acesso ao app? Use um Código de Backup:</strong></p>
+                       
+                        <input
+                            type="text"
+                            value={backupCodeDigitado}
+                            onChange={(e) => setBackupCodeDigitado(e.target.value)}
+                            placeholder="Digite o código de backup"
+                            required
+                        />
+                        <button type="submit">Desativar 2FA com Código de Backup</button>
                     </form>
                 </div>
             )}

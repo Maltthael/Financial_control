@@ -6,3 +6,8 @@ class Login2FASchema(BaseModel):
     
 class Disable2FASchema(BaseModel):
     current_password: str
+    token: str
+    
+    
+class Disable2FABackupSchema(BaseModel):
+    backup_code: str
