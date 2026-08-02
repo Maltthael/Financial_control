@@ -97,7 +97,10 @@ function Login() {
                     </>
                 )}
                 <br />
-                <Link to="/usuario">Não possui uma conta?</Link>
+                
+                    <Link style={{marginRight: "1%"}} to="/cadastro">Não possui uma conta? </Link>
+                    <Link to="/recuperar_senha"> Esqueceu a senha?</Link>
+
             </form>
         </div>
     );

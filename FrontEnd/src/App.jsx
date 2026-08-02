@@ -8,6 +8,8 @@ import Menu_lateral from './components/menu_lateral';
 import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
 import './App.css';
 import PrivateRoute from './features/login_user/privateroute';
+import ForgotPassword from './features/login_user/ForgotPassword';
+import RecoverPassword from './features/login_user/RecoverPassword';
 
 function LayoutComMenu(){
   return (
@@ -33,8 +35,10 @@ function App() {
         </Route>
 
         {/* --- ROTAS SEM MENU --- */}
-        <Route path="/usuario" element={<CadastroUser/>}/>
+        <Route path="/cadastro" element={<CadastroUser/>}/>
         <Route path="/login" element={<Login/>}/>
+        <Route path="/recuperar_senha" element={<ForgotPassword/>}/>
+        <Route path="/mudar_senha" element={<RecoverPassword/>}/>
         <Route path="/" element={<Login/>} />    
       </Routes>
     </BrowserRouter>
