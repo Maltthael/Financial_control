@@ -50,6 +50,8 @@ class User(SQLModel, table=True):
     secret_2fa: Optional[str] = Field(default=None)
     is_2fa_enabled: bool = Field(default=False)
     backup_codes: Optional[str] = None 
+    reset_token: Optional[str] = None
+    reset_token_expires: Optional[datetime] = None
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)

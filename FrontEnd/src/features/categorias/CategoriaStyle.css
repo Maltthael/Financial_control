@@ -1,22 +1,68 @@
-/* Categorias.css */
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); 
-    display: flex;
-    justify-content: center;
-    align-items: center;  
-    z-index: 1000;         
+.categorias-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
-.modal-content {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
-    min-width: 300px;
+.btn-nova-categoria {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.btn-nova-categoria:hover {
+    background-color: #0056b3;
+}
+
+.categorias-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.categoria-item {
+    margin: 15px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+.categoria-nome {
+    font-size: 1.1em;
+    color: #333;
+}
+
+.transacoes-container {
+    margin-top: 10px;
+    margin-left: 15px;
+    border-left: 2px solid #ccc;
+    padding-left: 10px;
+}
+
+.transacoes-titulo {
+    font-size: 0.9em;
+    color: #666;
+    font-weight: bold;
+}
+
+.transacoes-list {
+    margin-top: 5px;
+    padding-left: 20px;
+}
+
+.transacao-item {
+    font-size: 0.9em;
+    margin: 3px 0;
+    color: #444;
+}
+
+.sem-transacoes {
+    font-size: 0.85em;
+    color: #999;
+    margin: 5px 0 0 0;
+    font-style: italic;
 }

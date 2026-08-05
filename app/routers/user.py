@@ -1,11 +1,13 @@
 
-import pyotp
+import pyotp, secrets
+from datetime import datetime, timedelta
 from app.database import User, LoginRequest, get_session
 from app.core.security import hash_senha, verificar_senha
 from sqlmodel import Session, select
 from fastapi import APIRouter, HTTPException, Depends, Body
 from app.core.auth_token import criar_token_acesso
-from app.schemas import Login2FASchema
+from app.schemas import Login2FASchema, RecoverPasswordSchema, ResetPasswordSchema
+from app.utils import enviar_email_recuperacao
 
 
 router = APIRouter(prefix="/auth")
@@ -76,3 +78,54 @@ def login_2fa(data: Login2FASchema, session: Session = Depends(get_session)):
             "token_type": "bearer"
         }
     raise HTTPException(status_code=401, detail="Codigo 2FA inválido ou expirado.")
+
+
+@router.post("/password-recover", response_model= None)
+def password_recover(data: RecoverPasswordSchema, session: Session = Depends(get_session)):
+    statement = select(User).where(User.email == data.email)
+    usuario = session.exec(statement).first()
+    
+    if usuario:
+        token = secrets.token_urlsafe(32)
+        usuario.reset_token = token
+        usuario.reset_token_expires = datetime.utcnow() + timedelta(minutes=15)
+        
+        session.add(usuario)
+        session.commit()
+        enviar_email_recuperacao(usuario.email, token)
+    
+    return {
+      "message": (
+          "Se o e-mail informado estiver cadastrado, você receberá as"
+          " instruções de recuperação em breve."
+      )
+    }
+    
+@router.post("/reset-password")
+def reset_password(
+    data: ResetPasswordSchema, session: Session = Depends(get_session)
+):
+  statement = select(User).where(User.reset_token == data.token)
+  usuario = session.exec(statement).first()
+
+  if not usuario or not usuario.reset_token_expires:
+    raise HTTPException(status_code=400, detail="Token inválido ou expirado.")
+
+  if datetime.utcnow() > usuario.reset_token_expires:
+    raise HTTPException(
+        status_code=400,
+        detail=(
+            "Este link de recuperação expirou. Solicite um novo"
+            " reenvio."
+        ),
+    )
+
+  usuario.senha = hash_senha(data.new_password)
+
+  usuario.reset_token = None
+  usuario.reset_token_expires = None
+
+  session.add(usuario)
+  session.commit()
+
+  return {"message": "Senha redefinida com sucesso! Você já pode fazer login."}
