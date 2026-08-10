@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, Depends, Body
 from app.core.auth_token import criar_token_acesso
 from app.schemas import Login2FASchema, RecoverPasswordSchema, ResetPasswordSchema
 from app.utils import enviar_email_recuperacao
+from app.core.serializer.cadastro_user import CadastroUserSerializer
 
 
 router = APIRouter(prefix="/auth")
@@ -16,11 +17,16 @@ router = APIRouter(prefix="/auth")
 @router.post("/cadastro")
 def cadastrar_usuario(usuario: User, session: Session = Depends(get_session)):
     try:
-        senha_criptografada = hash_senha(usuario.senha)
+      
+        serializer = CadastroUserSerializer(usuario, session)
+        usuario_validado = serializer.validar_e_processar()
+
+      
+        senha_criptografada = hash_senha(usuario_validado.senha)
         
         novo_usuario = User(
-            nome=usuario.nome,
-            email=usuario.email,
+            nome=usuario_validado.nome,
+            email=usuario_validado.email,
             senha=senha_criptografada 
         )
         
@@ -30,6 +36,8 @@ def cadastrar_usuario(usuario: User, session: Session = Depends(get_session)):
         
         return {"mensagem": "Usuário criado com sucesso!"}
         
+    except HTTPException as he:
+        raise he
     except Exception as e:
         session.rollback()
         print(f"Erro interno no cadastro: {e}")
