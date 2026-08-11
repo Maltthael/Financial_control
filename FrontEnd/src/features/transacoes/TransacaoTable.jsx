@@ -8,7 +8,13 @@ function TransacaoTable() {
     const [categorias, setCategorias] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [transacaoParaEditar, setTransacaoParaEditar] = useState(null);
+    const [filtroTexto, setFiltroTexto] = useState('');
+    const [filtroCategoria, setFiltroCategoria] = useState('');
+    const [filtroTipo, setFiltroTipo] = useState('todos');
 
+    
+
+    
 
 
 
@@ -19,7 +25,7 @@ function TransacaoTable() {
     const carregarTransacoes = async () => {
         try {
             const response = await api.get('/api/transacoes');
-            setTransacoes(response.data); 
+            setTransacoes(response.data);
         } catch (err) {
             console.error("Erro ao buscar transações:", err);
         }
@@ -38,7 +44,7 @@ function TransacaoTable() {
         if (window.confirm("Tem certeza que deseja deletar?")) {
             try {
                 await api.delete(`/api/transacoes/${id}`);
-                carregarTransacoes(); 
+                carregarTransacoes();
             } catch (err) {
                 console.error("Erro ao deletar:", err);
             }
@@ -60,11 +66,64 @@ function TransacaoTable() {
         carregarCategorias();
     }, []);
 
+    const transacoesFiltradas = transacoes.filter((t) => {
+        const matchTexto = t.descricao?.toLowerCase().includes(filtroTexto.toLowerCase()) ?? true;
+        const matchCategoria = filtroCategoria === '' || String(t.categoria_id) === String(filtroCategoria);
+        let matchTipo = true;
+        if (filtroTipo === 'receita') {
+            matchTipo = t.receita === true || t.receita === 1 || t.receita === 'true';
+        } else if (filtroTipo === 'gasto') {
+            matchTipo = t.receita === false || t.receita === 0 || t.receita === 'false';
+        }
+        return matchTexto && matchCategoria && matchTipo;
+});
+    
 
     return (
         <div>
             <h1>Transações</h1>
             <button onClick={() => setIsModalOpen(true)}>Nova transação</button>
+
+            <div className="filtros-container" style={{ margin: '20px 0', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                <div>
+                    <label style={{ display: 'block', fontSize: '12px' }}>Pesquisar por descrição:</label>
+                    <input 
+                        type="text" 
+                        placeholder="Ex: Supermercado..." 
+                        value={filtroTexto}
+                        onChange={(e) => setFiltroTexto(e.target.value)}
+                        style={{ padding: '6px' }}
+                    />
+                </div>
+
+                <div>
+                    <label style={{ display: 'block', fontSize: '12px' }}>Filtrar por Categoria:</label>
+                    <select 
+                        value={filtroCategoria} 
+                        onChange={(e) => setFiltroCategoria(e.target.value)}
+                        style={{ padding: '6px' }}
+                    >
+                        <option value="">Todas as categorias</option>
+                        {categorias.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.nome}</option>
+                        ))}
+                    </select>
+                </div>
+
+                <div>
+                    <label style={{ display: 'block', fontSize: '12px' }}>Tipo:</label>
+                    <select 
+                        value={filtroTipo} 
+                        onChange={(e) => setFiltroTipo(e.target.value)}
+                        style={{ padding: '6px' }}
+                    >
+                        <option value="todos">Todos</option>
+                        <option value="receita">Receitas</option>
+                        <option value="gasto">Gastos</option>
+                    </select>
+                </div>
+            </div>
+
             {isModalOpen && (
                 <TransacaoForm
                     transacao={transacaoParaEditar}
@@ -90,22 +149,28 @@ function TransacaoTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    {transacoes.map((t) => (
-                        <tr key={t.id}>
-                            <td>{t.descricao}</td>
-                            <td>{t.valor != null ? t.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</td>
-                            <td>{categorias.find(cat => cat.id === t.categoria_id)?.nome || "Sem Categoria"}</td>
-                            <td className={t.receita ? 'receita' : 'gasto'}> {t.receita ? "Receita" : "Gasto"}</td>
-                            <td>
-                                <button onClick={() => deletarTransacao(t.id)}>Deletar</button>
-                                <button onClick={() => iniciarEdicao(t)}>Editar</button>
-                            </td>
+                    {transacoesFiltradas.length > 0 ? (
+                        transacoesFiltradas.map((t) => (
+                            <tr key={t.id}>
+                                <td>{t.descricao}</td>
+                                <td>{t.valor != null ? Number(t.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</td>
+                                <td>{categorias.find(cat => cat.id === t.categoria_id)?.nome || "Sem Categoria"}</td>
+                                <td className={t.receita ? 'receita' : 'gasto'}> {t.receita ? "Receita" : "Gasto"}</td>
+                                <td>
+                                    <button onClick={() => deletarTransacao(t.id)}>Deletar</button>
+                                    <button onClick={() => iniciarEdicao(t)}>Editar</button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5" style={{ textAlign: 'center' }}>Nenhuma transação encontrada com esses filtros.</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>
     );
-}
 
+}
 export default TransacaoTable;
