@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.transacao-body {
+    background-color: aliceblue;
+    border-radius: 10px;
+    padding: 8px;
+    opacity: 0.9;
+}
+
+.transacao-container {
+    text-align: center;
+    font-size: 20px;
+}
+
+.transacao-filtro {
+    justify-content: center;
+    margin-bottom: 1%;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;   
+}
+
+.transacao-filtro-input {
+    border: 1px solid #dcdcdc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 15px;
+    margin-bottom: 15px;
+    outline: none;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.transacao-filtro-input:focus {
+    border-color: #4a90e2;
+}
+
+.transacao-table {
+    font-size: 15px;
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.transacao-table th, 
+.transacao-table td {
+    padding: 14px 18px;
+    text-align: left;
+}
+
+.transacao-table tbody tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    transition: background-color 0.2s;
+}
+
+.transacao-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.transacao-cabecalho {
+    font-size: 20px;
+}
+
+.transacao-deletebutton {
+    border-radius: 10px;
+    padding: 8px;
+    margin-left: 5px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #ff0000;
+    transition: background-color 0.2s;
+    color: #ffffff;
+    width: 100%;
+}
+
+.transacao-deletebutton:hover {
+    background-color: #ff6969;
+}
+
+.transacao-editbutton {
+    border-radius: 10px;
+    padding: 8px;
+    margin-left: 5px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #ffd000;
+    transition: background-color 0.2s;
+    color: #ffffff;
+    width: 100%;
+}
+
+.transacao-editbutton:hover {
+    background-color: #fde579;
+}
+
+.transacao-criarbutton {
+    border-radius: 10px;
+    padding: 12px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #4a90e2;
+    transition: background-color 0.2s;
+    color: #ffffff;
+    width: 12%;
+}
+
+.transacao-container-button {
+    display: flex;
+    width: 90%;
+    align-self: center;
+}
