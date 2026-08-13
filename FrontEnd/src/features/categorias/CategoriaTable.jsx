@@ -57,7 +57,6 @@ function CategoriasPage() {
 
     return (
         <div className="categorias-container">
-            <h1>Gerenciar Categorias</h1>
 
             <button 
                 className="btn-nova-categoria"
@@ -66,7 +65,6 @@ function CategoriasPage() {
                 + Nova Categoria
             </button>
 
-            <h3>Categorias e Transações Existentes</h3>
             
             <ul className="categorias-list">
                 {categorias.map(cat => (
