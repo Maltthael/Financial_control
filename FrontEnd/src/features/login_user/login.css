@@ -1,8 +1,20 @@
+.login-page-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fffcfc; 
+    z-index: 9999;             
+    display: flex;
+    overflow: hidden;
+}
+
 .login-body {
     display: flex;
     flex-direction: row;
-    width: 100vw;   
-    height: 100vh; 
+    width: 100vw;
+    height: 100vh;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -10,39 +22,52 @@
 }
 
 .login-container {
-    flex: 1;        
-    background: linear-gradient(to right, rgb(0, 183, 255), rgb(255, 254, 254));
-    height: 100%;   
+   flex: 1;
+    
+    background-image: 
+        linear-gradient(to right, rgba(0, 183, 255, 0.7), rgba(255, 254, 254, 0.7)), 
+        url('../../img/fundo_cadastro.jpg');
+    background-repeat: no-repeat, no-repeat;
+    background-size: cover, cover;
+    height: 100%;
     display: flex;
     justify-content: center;
     box-sizing: border-box;
+    -webkit-mask-image: linear-gradient(to right, black 100%, transparent 100%);
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    -webkit-mask-size: cover;
+    mask-size: cover;
 }
 
-.login-content{
- display: flex;
- justify-content: center;
- flex-direction: column;
+.login-content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
-.login-content-title{
+
+.login-content-title {
     margin-bottom: 15px;
     text-align: center;
 }
 
-.login-content-text{
+.login-content-text {
     font-size: 20px;
-    
+    width: 100%;
+    text-align: center;
+
 }
 
 
 .login-container2 {
-    flex: 1;            
-    background-color: rgb(255, 254, 254);
-    height: 100%;   
+    flex: 1;
+    background-color: #ffffff;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+    
 }
 
 .login-form {
@@ -114,21 +139,21 @@
    RESPONSIVIDADE PARA CELULARES E TABLETS
    ================ ========================== */
 @media (max-width: 768px) {
-   
+
     .login-container {
-        display: none; 
+        display: none;
     }
 
-    
+
     .login-container2 {
         width: 100vw;
         padding: 20px;
     }
 
-   
+
     .login-form {
         padding: 30px 20px;
-        box-shadow: none; 
+        box-shadow: none;
         background-color: transparent;
     }
 }

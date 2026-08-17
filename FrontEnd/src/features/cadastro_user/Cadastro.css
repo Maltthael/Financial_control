@@ -1,5 +1,6 @@
 .cadastro-body{
-    background-color: rgb(0, 183, 255);
+    background: linear-gradient(to right, rgb(0, 183, 255), rgb(255, 254, 254));
+   
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,6 +9,7 @@
     
     
 }
+
 
 .cadastro-container{
     background-color: aliceblue;

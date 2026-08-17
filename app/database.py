@@ -24,6 +24,7 @@ class Categoria(SQLModel, table=True):
 class LoginRequest(BaseModel):
     email: str
     senha: str
+    remember_me: bool = False
 
 
 class Transacao(SQLModel, table=True):

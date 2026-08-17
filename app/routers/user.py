@@ -58,10 +58,15 @@ def login(login_data: LoginRequest, session: Session = Depends(get_session)):
             "require_2fa": True,
             "message": "Credenciais válidas. Insira o código do 2FA para prosseguir."
         }
+        
+    if getattr(login_data, "remember_me", False):
+        access_token_expires = timedelta(days=7)
+    else:
+        access_token_expires = timedelta(minutes=30)
     
     
     
-    access_token = criar_token_acesso(data={"sub": str(usuario.id)})
+    access_token = criar_token_acesso(data={"sub": str(usuario.id)}, expires_delta = access_token_expires)
     
     return {
         "message": "Login efetuado com sucesso!",
