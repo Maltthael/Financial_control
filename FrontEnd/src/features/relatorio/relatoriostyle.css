@@ -1,12 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .relatorio-container {
+    border-radius: 15px;
     font-family: 'Inter', sans-serif;
     padding: 32px;
     background-color: #f8fafc;
     min-height: 100vh;
     color: #1e293b;
     box-sizing: border-box;
+    animation: fadeIn 0.6s ease-out forwards;
 }
 
 .relatorio-header {

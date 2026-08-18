@@ -36,10 +36,6 @@ function MenuLateral() {
                     <span>Categorias</span>
                 </Link>
                 
-                <Link to="/configuracoes" className={`nav-link ${location.pathname === '/configuracoes' ? 'active' : ''}`}>
-                    <FaCog className="nav-icon" />
-                    <span>Configurações</span>
-                </Link>
                 
                
                 <Link to="/Perfil" className={`nav-link ${location.pathname === '/perfil' ? 'active' : ''}`}>

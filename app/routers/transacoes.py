@@ -80,7 +80,7 @@ def criar_transacao(data: TransacaoCreate, token_data: dict = Depends(verificar_
 
 
 @router.get("/exibir_receitas")
-def exibir_receitas(token_data: dict = Depends):
+def exibir_receitas(token_data: dict = Depends(verificar_token)):
      user_id = int(token_data["sub"])
      with Session(engine) as session:
          comando = select(Transacao) .where(Transacao.receita == True, Transacao.user_id == user_id)
