@@ -3,7 +3,6 @@ import TransacaoForm from './TransacaoForm';
 import api from '../../services/api';
 import './TransacaoTableStyle.css';
 
-
 function TransacaoTable() {
     const [transacoes, setTransacoes] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -13,16 +12,24 @@ function TransacaoTable() {
     const [filtroCategoria, setFiltroCategoria] = useState('');
     const [filtroTipo, setFiltroTipo] = useState('todos');
 
-    
-
-    
-
-
+    const formatarDataEHora = (dataIsoString) => {
+        if (!dataIsoString) return '-';
+        const data = new Date(dataIsoString);
+        
+        return data.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
 
     const iniciarEdicao = (transacao) => {
         setTransacaoParaEditar(transacao)
         setIsModalOpen(true);
     }
+    
     const carregarTransacoes = async () => {
         try {
             const response = await api.get('/api/transacoes');
@@ -52,7 +59,7 @@ function TransacaoTable() {
         }
     };
 
-    const salvarEdição = async (id, dadosEditados) => {
+    const salvarEdicao = async (id, dadosEditados) => {
         try {
             await api.put(`/api/transacoes/editar/${id}`, dadosEditados);
             setIsModalOpen(false);
@@ -77,9 +84,8 @@ function TransacaoTable() {
             matchTipo = t.receita === false || t.receita === 0 || t.receita === 'false';
         }
         return matchTexto && matchCategoria && matchTipo;
-});
+    });
     
-
     return (
         <div className='transacao-body'>
           
@@ -149,6 +155,7 @@ function TransacaoTable() {
                         <th>Valor</th>
                         <th>Categoria</th>
                         <th>Receita</th>
+                        <th>Data e Hora</th> 
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -160,21 +167,24 @@ function TransacaoTable() {
                                 <td>{t.valor != null ? Number(t.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</td>
                                 <td>{categorias.find(cat => cat.id === t.categoria_id)?.nome || "Sem Categoria"}</td>
                                 <td className={t.receita ? 'receita' : 'gasto'}> {t.receita ? "Receita" : "Gasto"}</td>
+                                
+                                <td>{formatarDataEHora(t.data_criacao)}</td>
+                                
                                 <td className='transacao-container-button'>
                                     <button className='transacao-deletebutton' onClick={() => deletarTransacao(t.id)}>Deletar</button>
-                                    <button className='transacao-editbutton'onClick={() => iniciarEdicao(t)}>Editar</button>
+                                    <button className='transacao-editbutton' onClick={() => iniciarEdicao(t)}>Editar</button>
                                 </td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5" style={{ textAlign: 'center' }}>Nenhuma transação encontrada com esses filtros.</td>
+                            <td colSpan="6" style={{ textAlign: 'center' }}>Nenhuma transação encontrada com esses filtros.</td>
                         </tr>
                     )}
                 </tbody>
             </table>
         </div>
     );
-
 }
+
 export default TransacaoTable;

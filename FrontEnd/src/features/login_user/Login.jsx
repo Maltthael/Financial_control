@@ -2,7 +2,7 @@ import { useAuth } from './AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import './login.css';
-import './popup.css'; // Importando o novo CSS
+import './popup.css'; 
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -11,17 +11,14 @@ function Login() {
     const [precisa2FA, setPrecisa2FA] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     
-    // Novo estado para controlar o Pop-up
     const [popup, setPopup] = useState({ show: false, message: '', type: '' });
 
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    // Função auxiliar para mostrar o pop-up
     const showPopup = (message, type) => {
         setPopup({ show: true, message, type });
         
-        // Se for um erro, esconde o pop-up automaticamente após 3 segundos
         if (type === 'error') {
             setTimeout(() => {
                 setPopup({ show: false, message: '', type: '' });
@@ -51,7 +48,6 @@ function Login() {
                     localStorage.setItem('token', data.access_token);
                     login(data.access_token);
                     
-                    // Mostra pop-up de sucesso e aguarda 1.5s antes de mudar de página
                     showPopup('Login efetuado com sucesso!', 'success');
                     setTimeout(() => {
                         navigate('/transacoes');
@@ -72,7 +68,6 @@ function Login() {
                     localStorage.setItem('token', data.access_token);
                     login(data.access_token);
                     
-                    // Mostra pop-up de sucesso e aguarda 1.5s antes de mudar de página
                     showPopup('Login com 2FA efetuado com sucesso!', 'success');
                     setTimeout(() => {
                         navigate('/transacoes');
@@ -89,7 +84,7 @@ function Login() {
 
     return (
         <div className="login-page-root">
-            {/* Renderização condicional do Pop-up */}
+           
             {popup.show && (
                 <div className={`popup-container popup-${popup.type}`}>
                     <span className="popup-icon">
