@@ -18,6 +18,16 @@ function CategoriasPage() {
         }
     }
 
+    const handleEditarCategoria = async (categoria_id) => {
+        try{
+            await api.get(`/categorias/editar/${categoria_id}`);
+            carregarCategoriasETransacoes();
+        } catch (err){
+            console.error("Erro ao editar categoria", err );
+            alert("Não foi possivel editar a categoria.");
+        }
+    }
+
 
     const carregarCategoriasETransacoes = async () => {
         try {
@@ -96,7 +106,15 @@ function CategoriasPage() {
                                 onClick={() => handleDeleteCategoria(cat.id)}
                                 title="Deletar Categoria"
                             >
+                            
                                 Excluir
+                            </button>
+
+                            <button className='categoria-editarbutton'
+                                onClick={() => handleEditarCategoria(cat.id)}
+                                title="Editar categoria"
+                            >
+                                Editar
                             </button>
                         </div>
 

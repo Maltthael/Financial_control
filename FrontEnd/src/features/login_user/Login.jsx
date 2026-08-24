@@ -2,16 +2,32 @@ import { useAuth } from './AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import './login.css';
+import './popup.css'; // Importando o novo CSS
 
 function Login() {
-
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [codigo2FA, setCodigo2FA] = useState('');
     const [precisa2FA, setPrecisa2FA] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
+    
+    // Novo estado para controlar o Pop-up
+    const [popup, setPopup] = useState({ show: false, message: '', type: '' });
+
     const { login } = useAuth();
     const navigate = useNavigate();
-    const [rememberMe, setRememberMe] = useState(false);
+
+    // Função auxiliar para mostrar o pop-up
+    const showPopup = (message, type) => {
+        setPopup({ show: true, message, type });
+        
+        // Se for um erro, esconde o pop-up automaticamente após 3 segundos
+        if (type === 'error') {
+            setTimeout(() => {
+                setPopup({ show: false, message: '', type: '' });
+            }, 3000);
+        }
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -21,7 +37,7 @@ function Login() {
                 const response = await fetch('http://localhost:8000/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, senha, rememberMe: rememberMe }),
+                    body: JSON.stringify({ email, senha, rememberMe }),
                 });
 
                 if (response.ok) {
@@ -34,10 +50,15 @@ function Login() {
 
                     localStorage.setItem('token', data.access_token);
                     login(data.access_token);
-                    alert('Login efetuado com sucesso!');
-                    window.location.href = "/transacoes";
+                    
+                    // Mostra pop-up de sucesso e aguarda 1.5s antes de mudar de página
+                    showPopup('Login efetuado com sucesso!', 'success');
+                    setTimeout(() => {
+                        navigate('/transacoes');
+                    }, 1500);
+
                 } else {
-                    alert('Falha ao logar. Verifique suas credenciais.');
+                    showPopup('Falha ao logar. Verifique suas credenciais.', 'error');
                 }
             } else {
                 const response = await fetch('http://localhost:8000/auth/login-2fa', {
@@ -50,20 +71,34 @@ function Login() {
                     const data = await response.json();
                     localStorage.setItem('token', data.access_token);
                     login(data.access_token);
-                    alert('Login com 2FA efetuado com sucesso!');
-                    window.location.href = "/transacoes";
+                    
+                    // Mostra pop-up de sucesso e aguarda 1.5s antes de mudar de página
+                    showPopup('Login com 2FA efetuado com sucesso!', 'success');
+                    setTimeout(() => {
+                        navigate('/transacoes');
+                    }, 1500);
                 } else {
-                    alert('Código 2FA inválido ou expirado.');
+                    showPopup('Código 2FA inválido ou expirado.', 'error');
                 }
             }
         } catch (error) {
             console.error('Erro ao realizar login:', error);
+            showPopup('Erro de conexão com o servidor.', 'error');
         }
     };
 
     return (
-        /* ADICIONADO: Wrapper de tela cheia que bloqueia o fundo global */
         <div className="login-page-root">
+            {/* Renderização condicional do Pop-up */}
+            {popup.show && (
+                <div className={`popup-container popup-${popup.type}`}>
+                    <span className="popup-icon">
+                        {popup.type === 'success' ? '✅' : '❌'}
+                    </span>
+                    <span>{popup.message}</span>
+                </div>
+            )}
+
             <div className='login-body'>
                 <div className='login-container'>
                     <div className='login-content'>
@@ -74,7 +109,7 @@ function Login() {
 
                 <div className='login-container2'>
                     <form onSubmit={handleLogin} className='login-form'>
-                        <div >
+                        <div>
                             {!precisa2FA ? (
                                 <>
                                     <input className='login-input'
@@ -131,6 +166,6 @@ function Login() {
             </div>
         </div>
     );
-};
+}
 
 export default Login;

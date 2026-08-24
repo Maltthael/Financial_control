@@ -25,6 +25,15 @@
     cursor: pointer;
     font-size: 12px;
 }
+.categoria-editarbutton{
+    background: #fda43e;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
 
 .categoria-deletebutton:hover{
     background-color: #e06a66;

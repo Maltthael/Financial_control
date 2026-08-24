@@ -34,7 +34,7 @@
     justify-content: center;
     box-sizing: border-box;
     -webkit-mask-image: linear-gradient(to right, black 100%, transparent 100%);
-    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    mask-image: linear-gradient(to right, black 90%, transparent 100%);
     -webkit-mask-size: cover;
     mask-size: cover;
 }
@@ -134,6 +134,8 @@
     color: #000000;
     text-decoration: underline;
 }
+
+
 
 /* ==========================================
    RESPONSIVIDADE PARA CELULARES E TABLETS
