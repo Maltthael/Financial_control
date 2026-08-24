@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import './Cadastro.css';
 
 
 function CadastroUser() {
@@ -10,7 +11,7 @@ function CadastroUser() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const usuario = { nome, email, senha };
 
         try {
@@ -33,16 +34,30 @@ function CadastroUser() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Cadastro de Usuário</h2>
-            <input type="text" placeholder='Nome' value={nome} onChange={(e) => setNome(e.target.value)} required />
-            <input type="email" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input type="password" placeholder='Senha' value={senha} onChange={(e) => setSenha(e.target.value)} required />
-            <button type='submit'>Cadastrar</button>
-            <br/>
-            <Link to="/login">Já possui uma conta?</Link>
-        </form>
-    
+        <div className='cadastro-body'>
+            <div className='cadastro-content'>
+                <div className='cadastro-content2'>
+
+                </div>
+                <div>
+
+                </div>
+            </div>
+            <div className='cadastro-container'>
+                <form onSubmit={handleSubmit} className='cadastro-form'>
+                    <h2 className='cadastro-titulo'>Cadastro de Usuário</h2>
+                    <input className='cadastro-input' type="text" placeholder='Nome' value={nome} onChange={(e) => setNome(e.target.value)} required />
+                    <input className='cadastro-input' type="email" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <input className='cadastro-input' type="password" placeholder='Senha' value={senha} onChange={(e) => setSenha(e.target.value)} required />
+                    <button className='cadastro-button' type='submit'>Cadastrar</button>
+                    <br />
+                    <Link className='cadastro-link' to="/login">Já possui uma conta?</Link>
+                </form>
+            </div>
+
+        </div>
+
+
 
     );
 }

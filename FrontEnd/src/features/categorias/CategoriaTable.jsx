@@ -7,11 +7,33 @@ function CategoriasPage() {
     const [categorias, setCategorias] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const handleDeleteCategoria = async (categoria_id) => {
+        try {
+            await api.get(`/categorias/deletar/${categoria_id}`);
+            carregarCategoriasETransacoes();
+
+        } catch (err) {
+            console.error("Erro ao deletar categoria:", err);
+            alert("Não foi possivel excluir a categoria.");
+        }
+    }
+
+    const handleEditarCategoria = async (categoria_id) => {
+        try{
+            await api.get(`/categorias/editar/${categoria_id}`);
+            carregarCategoriasETransacoes();
+        } catch (err){
+            console.error("Erro ao editar categoria", err );
+            alert("Não foi possivel editar a categoria.");
+        }
+    }
+
+
     const carregarCategoriasETransacoes = async () => {
         try {
             const [resCategorias, resTransacoes] = await Promise.all([
                 api.get('/api/categorias'),
-                api.get('/api/transacoes') 
+                api.get('/api/transacoes')
             ]);
 
             const listaCategorias = resCategorias.data;
@@ -24,9 +46,8 @@ function CategoriasPage() {
 
                 const subtotal = transacoesFiltradas.reduce((acc, t) => {
                     let valor = Number(t.valor) || 0;
-                    
-                    // Se t.receita for falso (ou 0), significa que é um gasto/despesa (valor negativo)
-                    // Se for verdadeiro, é uma receita (valor positivo)
+
+
                     const isReceita = t.receita === true || t.receita === 1 || t.receita === 'true';
 
                     if (!isReceita) {
@@ -57,32 +78,44 @@ function CategoriasPage() {
 
     return (
         <div className="categorias-container">
-            <h1>Gerenciar Categorias</h1>
 
-            <button 
+            <button
                 className="btn-nova-categoria"
                 onClick={() => setIsModalOpen(true)}
             >
                 + Nova Categoria
             </button>
 
-            <h3>Categorias e Transações Existentes</h3>
-            
+
             <ul className="categorias-list">
                 {categorias.map(cat => (
                     <li key={cat.id} className="categoria-item">
                         <div className="categoria-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <strong className="categoria-nome">Categoria: {cat.nome}</strong>
-                            
-                            <span 
-                                className="categoria-subtotal" 
-                                style={{ 
-                                    fontWeight: 'bold', 
-                                    color: cat.subtotal < 0 ? '#d9534f' : '#5cb85c' 
+
+                            <span
+                                className="categoria-subtotal"
+                                style={{
+                                    fontWeight: 'bold',
+                                    color: cat.subtotal < 0 ? '#d9534f' : '#5cb85c'
                                 }}
                             >
                                 Subtotal: {cat.subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </span>
+                            <button className='categoria-deletebutton'
+                                onClick={() => handleDeleteCategoria(cat.id)}
+                                title="Deletar Categoria"
+                            >
+                            
+                                Excluir
+                            </button>
+
+                            <button className='categoria-editarbutton'
+                                onClick={() => handleEditarCategoria(cat.id)}
+                                title="Editar categoria"
+                            >
+                                Editar
+                            </button>
                         </div>
 
                         <div className="transacoes-container">
@@ -94,14 +127,16 @@ function CategoriasPage() {
 
                                         return (
                                             <li key={transacao.id} className="transacao-item">
-                                                {transacao.descricao || transacao.nome || transacao.titulo} 
-                                                
+                                                {transacao.descricao || transacao.nome || transacao.titulo}
+
                                                 {transacao.valor !== undefined && transacao.valor !== null ? (
                                                     <span style={{ marginLeft: '8px', fontWeight: 'bold', color: !isReceita ? '#d9534f' : '#5cb85c' }}>
                                                         {!isReceita ? '-' : '+'} {Number(Math.abs(transacao.valor)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                     </span>
                                                 ) : ''}
                                             </li>
+
+
                                         );
                                     })}
                                 </ul>

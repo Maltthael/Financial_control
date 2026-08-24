@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import TransacaoForm from './TransacaoForm';
 import api from '../../services/api';
+import './TransacaoTableStyle.css';
 
 
 function TransacaoTable() {
@@ -80,14 +81,15 @@ function TransacaoTable() {
     
 
     return (
-        <div>
-            <h1>Transações</h1>
-            <button onClick={() => setIsModalOpen(true)}>Nova transação</button>
+        <div className='transacao-body'>
+          
+            <button className='transacao-criarbutton' onClick={() => setIsModalOpen(true)}>Nova transação +</button>
 
-            <div className="filtros-container" style={{ margin: '20px 0', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+            <div className="transacao-filtro" >
                 <div>
                     <label style={{ display: 'block', fontSize: '12px' }}>Pesquisar por descrição:</label>
-                    <input 
+                    <input
+                        className='transacao-filtro-input'
                         type="text" 
                         placeholder="Ex: Supermercado..." 
                         value={filtroTexto}
@@ -99,6 +101,7 @@ function TransacaoTable() {
                 <div>
                     <label style={{ display: 'block', fontSize: '12px' }}>Filtrar por Categoria:</label>
                     <select 
+                        className='transacao-filtro-input'
                         value={filtroCategoria} 
                         onChange={(e) => setFiltroCategoria(e.target.value)}
                         style={{ padding: '6px' }}
@@ -113,6 +116,7 @@ function TransacaoTable() {
                 <div>
                     <label style={{ display: 'block', fontSize: '12px' }}>Tipo:</label>
                     <select 
+                        className='transacao-filtro-input'
                         value={filtroTipo} 
                         onChange={(e) => setFiltroTipo(e.target.value)}
                         style={{ padding: '6px' }}
@@ -138,9 +142,9 @@ function TransacaoTable() {
                 />
             )}
 
-            <table>
-                <thead>
-                    <tr>
+            <table className='transacao-table'>
+                <thead className='transacao-cabecalho'>
+                    <tr >
                         <th>Descrição</th>
                         <th>Valor</th>
                         <th>Categoria</th>
@@ -148,7 +152,7 @@ function TransacaoTable() {
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className='transacao-container'>
                     {transacoesFiltradas.length > 0 ? (
                         transacoesFiltradas.map((t) => (
                             <tr key={t.id}>
@@ -156,9 +160,9 @@ function TransacaoTable() {
                                 <td>{t.valor != null ? Number(t.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</td>
                                 <td>{categorias.find(cat => cat.id === t.categoria_id)?.nome || "Sem Categoria"}</td>
                                 <td className={t.receita ? 'receita' : 'gasto'}> {t.receita ? "Receita" : "Gasto"}</td>
-                                <td>
-                                    <button onClick={() => deletarTransacao(t.id)}>Deletar</button>
-                                    <button onClick={() => iniciarEdicao(t)}>Editar</button>
+                                <td className='transacao-container-button'>
+                                    <button className='transacao-deletebutton' onClick={() => deletarTransacao(t.id)}>Deletar</button>
+                                    <button className='transacao-editbutton'onClick={() => iniciarEdicao(t)}>Editar</button>
                                 </td>
                             </tr>
                         ))

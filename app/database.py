@@ -21,9 +21,17 @@ class Categoria(SQLModel, table=True):
     user: User = Relationship(back_populates="categorias")
     transacoes: List["Transacao"] = Relationship(back_populates= "categoria")
 
+
+class CategoriaUpdate(SQLModel):
+    nome: Optional[str] = None
+    descricao: Optional[str] = None
+    cor: Optional[str] = None
+    
+    
 class LoginRequest(BaseModel):
     email: str
     senha: str
+    remember_me: bool = False
 
 
 class Transacao(SQLModel, table=True):
