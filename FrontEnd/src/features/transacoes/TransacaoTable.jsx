@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import TransacaoForm from './TransacaoForm';
 import api from '../../services/api';
 import './TransacaoTableStyle.css';
+import './popup.css';
 
 function TransacaoTable() {
     const [transacoes, setTransacoes] = useState([]);
@@ -11,6 +12,8 @@ function TransacaoTable() {
     const [filtroTexto, setFiltroTexto] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
     const [filtroTipo, setFiltroTipo] = useState('todos');
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [transacaoIdParaDeletar, setTransacaoIdParaDeletar] = useState(null);
 
     const formatarDataEHora = (dataIsoString) => {
         if (!dataIsoString) return '-';
@@ -48,15 +51,26 @@ function TransacaoTable() {
         }
     };
 
-    const deletarTransacao = async (id) => {
-        if (window.confirm("Tem certeza que deseja deletar?")) {
+    const abrirModalDeletar = (id) => {
+        setTransacaoIdParaDeletar(id);
+        setIsDeleteModalOpen(true); 
+    };
+
+    const fecharModalDeletar = () => {
+        setIsDeleteModalOpen(false); 
+        setTransacaoIdParaDeletar(null);
+    };
+
+    const confirmarDelecao = async () => {
+        if (transacaoIdParaDeletar) {
             try {
-                await api.delete(`/api/transacoes/${id}`);
+                await api.delete(`/api/transacoes/${transacaoIdParaDeletar}`);
                 carregarTransacoes();
             } catch (err) {
                 console.error("Erro ao deletar:", err);
             }
         }
+        fecharModalDeletar(); 
     };
 
     const salvarEdicao = async (id, dadosEditados) => {
@@ -148,6 +162,25 @@ function TransacaoTable() {
                 />
             )}
 
+            {isDeleteModalOpen && (
+                <div className="delete-modal-overlay">
+                    <div className="delete-modal-content">
+                       
+                        <h3>Tem certeza?</h3>
+                        <p>Você realmente deseja excluir esta transação? Essa ação não pode ser desfeita.</p>
+                        
+                        <div className="delete-modal-buttons">
+                            <button className="delete-btn-cancelar" onClick={fecharModalDeletar}>
+                                Cancelar
+                            </button>
+                            <button className="delete-btn-confirmar" onClick={confirmarDelecao}>
+                                Sim, excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <table className='transacao-table'>
                 <thead className='transacao-cabecalho'>
                     <tr >
@@ -171,7 +204,7 @@ function TransacaoTable() {
                                 <td>{formatarDataEHora(t.data_criacao)}</td>
                                 
                                 <td className='transacao-container-button'>
-                                    <button className='transacao-deletebutton' onClick={() => deletarTransacao(t.id)}>Deletar</button>
+                                    <button className='transacao-deletebutton' onClick={() => abrirModalDeletar(t.id)}>Deletar</button>
                                     <button className='transacao-editbutton' onClick={() => iniciarEdicao(t)}>Editar</button>
                                 </td>
                             </tr>
