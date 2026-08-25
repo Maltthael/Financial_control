@@ -135,7 +135,13 @@
     text-decoration: underline;
 }
 
-
+.login-remember{
+    color: #000000;
+    
+}
+.login-checkbox{
+    margin-right: 2px;
+}
 
 /* ==========================================
    RESPONSIVIDADE PARA CELULARES E TABLETS

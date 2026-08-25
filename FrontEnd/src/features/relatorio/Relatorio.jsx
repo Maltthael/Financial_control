@@ -3,7 +3,7 @@ import { PieChart, Pie, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxi
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PDFDocumento from './PDF/RelatorioPDF';
 import api from '../../services/api';
-import './RelatorioStyle.css'; // <-- Importando o CSS separado
+import './relatoriostyle.css'; //
 
 function Relatorio() {
     const [dados, setDados] = useState(null); 
@@ -47,7 +47,7 @@ function Relatorio() {
             <div className="relatorio-header">
                 <div>
                     <h1>Relatório Financeiro</h1>
-                    <p>Acompanhe o resumo das receitas, despesas e análise detalhada.</p>
+                    
                 </div>
                 <PDFDownloadLink 
                     document={<PDFDocumento data={dados} />} 
@@ -138,7 +138,6 @@ function Relatorio() {
                 </div>
             </div>
 
-            {/* Seção: Gastos por Categoria com Barras de Progresso */}
             {listaCategorias.length > 0 && (
                 <div className="card-grafico categorias-section">
                     <h3>Despesas por Categoria</h3>

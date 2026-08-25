@@ -122,13 +122,15 @@ function Login() {
                                         required
                                     />
                                     <button type="submit" className='login-button'>Entrar</button>
-                                    <input
+                                    
+                                    <label htmlFor="lembrar" className='login-remember'>
+                                        <input
                                         type="checkbox"
                                         id="lembrar"
+                                        className='login-checkbox'
                                         checked={rememberMe}
                                         onChange={(e) => setRememberMe(e.target.checked)}
                                     />
-                                    <label htmlFor="lembrar" style={{ fontSize: '14px', color: '#333', cursor: 'pointer' }}>
                                          Lembre-se de mim 
                                     </label>
                                 </>
