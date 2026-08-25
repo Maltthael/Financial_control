@@ -28,8 +28,7 @@ class Categoria(SQLModel, table=True):
 
 class CategoriaUpdate(SQLModel):
     nome: Optional[str] = None
-    descricao: Optional[str] = None
-    cor: Optional[str] = None
+    
     
     
 class LoginRequest(BaseModel):

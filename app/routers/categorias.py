@@ -28,7 +28,7 @@ def deletar_categoria(categoria_id: int, token_data: dict = Depends(verificar_to
             
     return {"status": "success", "message": "Categoria deletada com sucesso!"}
         
-@router.post("/caregorias/editar/{categoria_id}")
+@router.patch("/categorias/editar/{categoria_id}")
 def editar_categoria(categoria_id: int, categoria_dados: CategoriaUpdate,  token_data: dict = Depends(verificar_token)):
     user_id = int(token_data["sub"])
     with Session(engine) as session:

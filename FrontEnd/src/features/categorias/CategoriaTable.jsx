@@ -6,6 +6,7 @@ import './CategoriaStyle.css';
 function CategoriasPage() {
     const [categorias, setCategorias] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categoriaEditando, setCategoriaEditando] = useState(false);
 
     const handleDeleteCategoria = async (categoria_id) => {
         try {
@@ -18,15 +19,17 @@ function CategoriasPage() {
         }
     }
 
-    const handleEditarCategoria = async (categoria_id) => {
-        try{
-            await api.get(`/categorias/editar/${categoria_id}`);
-            carregarCategoriasETransacoes();
-        } catch (err){
-            console.error("Erro ao editar categoria", err );
-            alert("Não foi possivel editar a categoria.");
-        }
-    }
+    const abrirModalEdicao = (categoria) => {
+        setCategoriaEditando(categoria);
+        setIsModalOpen(true);
+    };
+
+    const abrirModalCriacao = () => {
+        setCategoriaEditando(null);
+        setIsModalOpen(true);
+    };
+
+
 
 
     const carregarCategoriasETransacoes = async () => {
@@ -46,8 +49,6 @@ function CategoriasPage() {
 
                 const subtotal = transacoesFiltradas.reduce((acc, t) => {
                     let valor = Number(t.valor) || 0;
-
-
                     const isReceita = t.receita === true || t.receita === 1 || t.receita === 'true';
 
                     if (!isReceita) {
@@ -78,14 +79,12 @@ function CategoriasPage() {
 
     return (
         <div className="categorias-container">
-
             <button
                 className="btn-nova-categoria"
-                onClick={() => setIsModalOpen(true)}
+                onClick={abrirModalCriacao} 
             >
                 + Nova Categoria
             </button>
-
 
             <ul className="categorias-list">
                 {categorias.map(cat => (
@@ -102,16 +101,16 @@ function CategoriasPage() {
                             >
                                 Subtotal: {cat.subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </span>
+
                             <button className='categoria-deletebutton'
                                 onClick={() => handleDeleteCategoria(cat.id)}
                                 title="Deletar Categoria"
                             >
-                            
                                 Excluir
                             </button>
 
                             <button className='categoria-editarbutton'
-                                onClick={() => handleEditarCategoria(cat.id)}
+                                onClick={() => abrirModalEdicao(cat)} 
                                 title="Editar categoria"
                             >
                                 Editar
@@ -128,15 +127,12 @@ function CategoriasPage() {
                                         return (
                                             <li key={transacao.id} className="transacao-item">
                                                 {transacao.descricao || transacao.nome || transacao.titulo}
-
                                                 {transacao.valor !== undefined && transacao.valor !== null ? (
                                                     <span style={{ marginLeft: '8px', fontWeight: 'bold', color: !isReceita ? '#d9534f' : '#5cb85c' }}>
                                                         {!isReceita ? '-' : '+'} {Number(Math.abs(transacao.valor)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                     </span>
                                                 ) : ''}
                                             </li>
-
-
                                         );
                                     })}
                                 </ul>
@@ -152,7 +148,11 @@ function CategoriasPage() {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <CategoriaForm
-                            onSave={carregarCategoriasETransacoes}
+                            categoriaParaEditar={categoriaEditando} 
+                            onSave={() => {
+                                carregarCategoriasETransacoes();
+                                setIsModalOpen(false);
+                            }}
                             onClose={() => setIsModalOpen(false)}
                         />
                     </div>
