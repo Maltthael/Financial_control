@@ -6,7 +6,6 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
-# Se você tem um schema Pydantic, ele fica aqui, ex:
 class TransacaoCreate(BaseModel):
     descricao: str
     valor: float
