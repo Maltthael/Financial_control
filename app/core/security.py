@@ -3,8 +3,8 @@ from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select
-from app.database import User, get_session
-from app.core.auth_token import SECRET_KEY, ALGORITHM 
+from database import User, get_session
+from core.auth_token import SECRET_KEY, ALGORITHM 
 from jose import jwt, JWTError
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

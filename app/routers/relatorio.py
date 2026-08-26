@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select, func
-from app.database import Transacao, Categoria, get_session
-from app.core.auth_token import verificar_token
+from database import Transacao, Categoria, get_session
+from core.auth_token import verificar_token
 
 router = APIRouter(prefix="/api/relatorios", tags=["relatorios"])
 

@@ -7,3 +7,11 @@ database.db
 venv/
 
 tests/
+
+dist/
+
+build/
+
+release/
+
+.env

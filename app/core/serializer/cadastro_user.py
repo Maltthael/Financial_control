@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from fastapi import HTTPException
-from app.database import User
+from database import User
 
 class CadastroUserSerializer:
     def __init__(self, usuario_data: User, session: Session):

@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
-
 from sqlmodel import Session, select
-from app.database import engine, Categoria, CategoriaUpdate
-from app.core.auth_token import verificar_token
+from database import engine, Categoria, CategoriaUpdate
+from core.auth_token import verificar_token
 
 router = APIRouter()
 
