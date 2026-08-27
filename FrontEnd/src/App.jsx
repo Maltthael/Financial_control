@@ -5,7 +5,7 @@ import Relatorio from './features/relatorio/Relatorio'
 import Login from './features/login_user/Login';
 import Perfil from './features/perfil_usuario/Perfil'
 import Menu_lateral from './components/menu_lateral';
-import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, Outlet } from 'react-router-dom'; //
 import './App.css';
 import PrivateRoute from './features/login_user/privateroute';
 import ForgotPassword from './features/login_user/ForgotPassword';
@@ -24,14 +24,14 @@ function LayoutComMenu(){
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
    
         <Route element={<LayoutComMenu />}> 
           <Route path="/transacoes" element={<PrivateRoute><TransacaoTable /></PrivateRoute>} />
           <Route path="/relatorio" element={<PrivateRoute><Relatorio /></PrivateRoute>} />
           <Route path="/categorias" element={<PrivateRoute><CategoriaTable/></PrivateRoute>} />   
-          <Route path="/perfil" element={<PrivateRoute><Perfil/></PrivateRoute>} />  
+          <Route path="/perfil" element={<PrivateRoute><Perfil/></PrivateRoute>} />   
         </Route>
 
         {/* --- ROTAS SEM MENU --- */}
@@ -39,9 +39,9 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/recuperar_senha" element={<ForgotPassword/>}/>
         <Route path="/mudar_senha" element={<RecoverPassword/>}/>
-        <Route path="/" element={<Login/>} />    
+        <Route path="/" element={<Login/>} />   
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

@@ -1,14 +1,14 @@
 
 import pyotp, secrets
 from datetime import datetime, timedelta
-from app.database import User, LoginRequest, get_session
-from app.core.security import hash_senha, verificar_senha
+from database import User, LoginRequest, get_session
+from core.security import hash_senha, verificar_senha
 from sqlmodel import Session, select
 from fastapi import APIRouter, HTTPException, Depends, Body
-from app.core.auth_token import criar_token_acesso
-from app.schemas import Login2FASchema, RecoverPasswordSchema, ResetPasswordSchema
-from app.utils import enviar_email_recuperacao
-from app.core.serializer.cadastro_user import CadastroUserSerializer
+from core.auth_token import criar_token_acesso
+from schemas import Login2FASchema, RecoverPasswordSchema, ResetPasswordSchema
+from utils import enviar_email_recuperacao
+from core.serializer.cadastro_user import CadastroUserSerializer
 
 
 router = APIRouter(prefix="/auth")

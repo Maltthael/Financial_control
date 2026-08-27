@@ -3,7 +3,7 @@ import { PieChart, Pie, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxi
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PDFDocumento from './PDF/RelatorioPDF';
 import api from '../../services/api';
-import './relatoriostyle.css'; 
+import './relatoriostyle.css'; //
 
 function Relatorio() {
     const [dados, setDados] = useState(null); 
@@ -29,11 +29,17 @@ function Relatorio() {
         );
     }
 
+    const { resumo_geral, destaques, despesas_por_categoria } = dados;
+
     const dadosGrafico = [
-        { name: 'Receitas', valor: dados['total de receita'] },
-        { name: 'Despesas', valor: dados['total de despesas'] },
-        { name: 'Saldo', valor: dados['saldo total'] }
+        { name: 'Receitas', valor: resumo_geral?.total_receitas || dados['total de receita'] || 0 },
+        { name: 'Despesas', valor: resumo_geral?.total_despesas || dados['total de despesas'] || 0 },
+        { name: 'Saldo', valor: resumo_geral?.saldo_total || dados['saldo total'] || 0 }
     ];
+
+    const listaCategorias = despesas_por_categoria 
+        ? Object.entries(despesas_por_categoria).map(([name, valor]) => ({ name, valor }))
+        : [];
 
     return (
         <div className="relatorio-container">
@@ -41,18 +47,44 @@ function Relatorio() {
             <div className="relatorio-header">
                 <div>
                     <h1>Relatório Financeiro</h1>
-                    <p>Acompanhe o resumo das receitas, despesas e saldo atual.</p>
+                    
                 </div>
                 <PDFDownloadLink 
                     document={<PDFDocumento data={dados} />} 
                     fileName="relatorio-financeiro.pdf"
                     className="btn-download"
                 >
-                    {({ loading }) => loading ? 'Preparando PDF...' : ' baixar PDF'}
+                    {({ loading }) => loading ? 'Preparando PDF...' : 'Baixar PDF'}
                 </PDFDownloadLink>
             </div>
 
-            {/* Grid de Gráficos */}
+            {/* Grid de Cards de Indicadores Extras */}
+            {resumo_geral && (
+                <div className="relatorio-cards-extras">
+                    <div className="card-extra">
+                        <span className="card-extra-label">Taxa de Poupança</span>
+                        <h3 className="card-extra-valor poupanca">{resumo_geral.taxa_poupanca_porcentagem}%</h3>
+                    </div>
+                    {destaques?.maior_receita?.descricao && (
+                        <div className="card-extra">
+                            <span className="card-extra-label">Maior Receita</span>
+                            <h3 className="card-extra-valor receita">
+                                {destaques.maior_receita.descricao} ({destaques.maior_receita.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})
+                            </h3>
+                        </div>
+                    )}
+                    {destaques?.maior_despesa?.descricao && (
+                        <div className="card-extra">
+                            <span className="card-extra-label">Maior Despesa</span>
+                            <h3 className="card-extra-valor despesa">
+                                {destaques.maior_despesa.descricao} ({destaques.maior_despesa.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})
+                            </h3>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Grid de Gráficos Principais */}
             <div className="relatorio-grid">
                 {/* Gráfico de Pizza */}
                 <div className="card-grafico">
@@ -105,6 +137,32 @@ function Relatorio() {
                     </ResponsiveContainer>
                 </div>
             </div>
+
+            {listaCategorias.length > 0 && (
+                <div className="card-grafico categorias-section">
+                    <h3>Despesas por Categoria</h3>
+                    <div className="categorias-lista-progresso">
+                        {listaCategorias.map((cat) => {
+                            const totalDespesas = resumo_geral?.total_despesas || 1;
+                            const porcentagem = Math.min(100, (cat.valor / totalDespesas) * 100);
+
+                            return (
+                                <div key={cat.name} className="categoria-barra-wrapper">
+                                    <div className="categoria-barra-info">
+                                        <span className="categoria-barra-nome">{cat.name}</span>
+                                        <span className="categoria-barra-valor">
+                                            {cat.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        </span>
+                                    </div>
+                                    <div className="barra-progresso-fundo">
+                                        <div className="barra-progresso-preenchido" style={{ width: `${porcentagem}%` }}></div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

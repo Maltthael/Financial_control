@@ -20,12 +20,15 @@ class Categoria(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     user: User = Relationship(back_populates="categorias")
     transacoes: List["Transacao"] = Relationship(back_populates= "categoria")
+    data_criacao: datetime = Field(
+        default_factory=datetime.utcnow,
+        nullable=False
+    )
 
 
 class CategoriaUpdate(SQLModel):
     nome: Optional[str] = None
-    descricao: Optional[str] = None
-    cor: Optional[str] = None
+    
     
     
 class LoginRequest(BaseModel):

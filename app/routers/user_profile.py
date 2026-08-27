@@ -3,10 +3,10 @@ from sqlmodel import Session, select
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 import pyotp, base64, secrets, string, time, qrcode, io
-from app.database import User, get_session
-from app.core.security import get_current_user, verificar_senha, gerar_codigos_backup
-from app.core.auth_token import criar_token_acesso
-from app.schemas import Disable2FASchema, Disable2FABackupSchema
+from database import User, get_session
+from core.security import get_current_user, verificar_senha, gerar_codigos_backup
+from core.auth_token import criar_token_acesso
+from schemas import Disable2FASchema, Disable2FABackupSchema
 
 router = APIRouter(prefix='/perfil', tags=["Perfil e 2FA"])
 
