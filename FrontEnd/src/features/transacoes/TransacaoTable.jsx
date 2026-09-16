@@ -14,11 +14,19 @@ function TransacaoTable() {
     const [filtroTipo, setFiltroTipo] = useState('todos');
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [transacaoIdParaDeletar, setTransacaoIdParaDeletar] = useState(null);
+    const [isAnexoModalOpen, setIsAnexoModalOpen] = useState(false);
+    const [transacaoIdParaAnexar, setTransacaoIdParaAnexar] = useState(null);
+    const [arquivoSelecionado, setArquivoSelecionado] = useState(null);
+    const [dropdownAbertoId, setDropdownAbertoId] = useState(null);
+
+    const toggleDropdown = (id) => {
+        setDropdownAbertoId(prevId => prevId === id ? null : id);
+    };
 
     const formatarDataEHora = (dataIsoString) => {
         if (!dataIsoString) return '-';
         const data = new Date(dataIsoString);
-        
+
         return data.toLocaleDateString('pt-BR', {
             day: '2-digit',
             month: '2-digit',
@@ -32,7 +40,7 @@ function TransacaoTable() {
         setTransacaoParaEditar(transacao)
         setIsModalOpen(true);
     }
-    
+
     const carregarTransacoes = async () => {
         try {
             const response = await api.get('/api/transacoes');
@@ -53,11 +61,11 @@ function TransacaoTable() {
 
     const abrirModalDeletar = (id) => {
         setTransacaoIdParaDeletar(id);
-        setIsDeleteModalOpen(true); 
+        setIsDeleteModalOpen(true);
     };
 
     const fecharModalDeletar = () => {
-        setIsDeleteModalOpen(false); 
+        setIsDeleteModalOpen(false);
         setTransacaoIdParaDeletar(null);
     };
 
@@ -70,7 +78,7 @@ function TransacaoTable() {
                 console.error("Erro ao deletar:", err);
             }
         }
-        fecharModalDeletar(); 
+        fecharModalDeletar();
     };
 
     const salvarEdicao = async (id, dadosEditados) => {
@@ -82,6 +90,55 @@ function TransacaoTable() {
             console.error("Erro ao editar:", err);
         }
     };
+
+    const abrirModalAnexo = (id) => {
+        setTransacaoIdParaAnexar(id);
+        setArquivoSelecionado(null);
+        setIsAnexoModalOpen(true);
+    };
+
+    const fecharModalAnexo = () => {
+        setIsAnexoModalOpen(false);
+        setTransacaoIdParaAnexar(null);
+        setArquivoSelecionado(null);
+    };
+
+    const confirmarAnexo = async () => {
+        if (!arquivoSelecionado || !transacaoIdParaAnexar) return;
+
+        const formData = new FormData();
+        formData.append('file', arquivoSelecionado);
+
+        try {
+            await api.put(`/api/transacoes/anexar/${transacaoIdParaAnexar}`, formData);
+
+            fecharModalAnexo();
+            carregarTransacoes();
+        } catch (error) {
+            console.error('Erro ao anexar comprovante:', error.response?.data || error);
+            alert(`Erro ao anexar: ${JSON.stringify(error.response?.data || error.message)}`);
+        }
+    };
+
+    const visualizarArquivo = (caminhoRelativo) => {
+        if (!caminhoRelativo) return;
+
+        const urlCompleta = `http://localhost:8000/${caminhoRelativo}`;
+        window.open(urlCompleta, '_blank');
+    };
+
+    const removerAnexo = async (id) => {
+        if (!window.confirm("Deseja realmente remover o anexo desta transação?")) return;
+
+        try {
+            await api.delete(`/api/transacoes/anexo/${id}`);
+            setDropdownAbertoId(null);
+            await carregarTransacoes();
+        } catch (error) {
+            console.error("Erro ao remover anexo:", error);
+        }
+    };
+
 
     useEffect(() => {
         carregarTransacoes();
@@ -99,19 +156,18 @@ function TransacaoTable() {
         }
         return matchTexto && matchCategoria && matchTipo;
     });
-    
+
     return (
         <div className='transacao-body'>
-          
             <button className='transacao-criarbutton' onClick={() => setIsModalOpen(true)}>Nova transação +</button>
 
-            <div className="transacao-filtro" >
+            <div className="transacao-filtro">
                 <div>
                     <label style={{ display: 'block', fontSize: '12px' }}>Pesquisar por descrição:</label>
                     <input
                         className='transacao-filtro-input'
-                        type="text" 
-                        placeholder="Ex: Supermercado..." 
+                        type="text"
+                        placeholder="Ex: Supermercado..."
                         value={filtroTexto}
                         onChange={(e) => setFiltroTexto(e.target.value)}
                         style={{ padding: '6px' }}
@@ -120,9 +176,9 @@ function TransacaoTable() {
 
                 <div>
                     <label style={{ display: 'block', fontSize: '12px' }}>Filtrar por Categoria:</label>
-                    <select 
+                    <select
                         className='transacao-filtro-input'
-                        value={filtroCategoria} 
+                        value={filtroCategoria}
                         onChange={(e) => setFiltroCategoria(e.target.value)}
                         style={{ padding: '6px' }}
                     >
@@ -135,9 +191,9 @@ function TransacaoTable() {
 
                 <div>
                     <label style={{ display: 'block', fontSize: '12px' }}>Tipo:</label>
-                    <select 
+                    <select
                         className='transacao-filtro-input'
-                        value={filtroTipo} 
+                        value={filtroTipo}
                         onChange={(e) => setFiltroTipo(e.target.value)}
                         style={{ padding: '6px' }}
                     >
@@ -165,10 +221,9 @@ function TransacaoTable() {
             {isDeleteModalOpen && (
                 <div className="delete-modal-overlay">
                     <div className="delete-modal-content">
-                       
                         <h3>Tem certeza?</h3>
                         <p>Você realmente deseja excluir esta transação? Essa ação não pode ser desfeita.</p>
-                        
+
                         <div className="delete-modal-buttons">
                             <button className="delete-btn-cancelar" onClick={fecharModalDeletar}>
                                 Cancelar
@@ -181,14 +236,44 @@ function TransacaoTable() {
                 </div>
             )}
 
+            {/* MODAL DE ANEXAR ARQUIVO */}
+            {isAnexoModalOpen && (
+                <div className="delete-modal-overlay">
+                    <div className="delete-modal-content">
+                        <h3>Anexar Comprovante</h3>
+                        <p>Selecione um arquivo (PDF ou imagem) para guardar nesta transação:</p>
+
+                        <input
+                            type="file"
+                            accept="image/*,application/pdf"
+                            onChange={(e) => setArquivoSelecionado(e.target.files[0])}
+                            style={{ margin: '15px 0' }}
+                        />
+
+                        <div className="delete-modal-buttons">
+                            <button className="delete-btn-cancelar" onClick={fecharModalAnexo}>
+                                Cancelar
+                            </button>
+                            <button
+                                className="delete-btn-confirmar"
+                                onClick={confirmarAnexo}
+                                disabled={!arquivoSelecionado}
+                            >
+                                Enviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <table className='transacao-table'>
                 <thead className='transacao-cabecalho'>
-                    <tr >
+                    <tr>
                         <th>Descrição</th>
                         <th>Valor</th>
                         <th>Categoria</th>
                         <th>Receita</th>
-                        <th>Data e Hora</th> 
+                        <th>Data e Hora</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -200,10 +285,45 @@ function TransacaoTable() {
                                 <td>{t.valor != null ? Number(t.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00'}</td>
                                 <td>{categorias.find(cat => cat.id === t.categoria_id)?.nome || "Sem Categoria"}</td>
                                 <td className={t.receita ? 'receita' : 'gasto'}> {t.receita ? "Receita" : "Gasto"}</td>
-                                
                                 <td>{formatarDataEHora(t.data_criacao)}</td>
-                                
+
                                 <td className='transacao-container-button'>
+                                    {/* LÓGICA DO DROPDOWN */}
+                                    {t.arquivo_anexo ? (
+                                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                                            <button
+                                                className='transacao-editbutton'
+                                                onClick={() => toggleDropdown(t.id)}
+                                            >
+                                                📄 Anexo ▾
+                                            </button>
+
+                                            {dropdownAbertoId === t.id && (
+                                                <div className="anexo-dropdown-menu">
+                                                    <button onClick={() => {
+                                                        visualizarArquivo(t.arquivo_anexo);
+                                                        setDropdownAbertoId(null);
+                                                    }}>
+                                                        👁️ Visualizar
+                                                    </button>
+                                                    <button onClick={() => {
+                                                        abrirModalAnexo(t.id);
+                                                        setDropdownAbertoId(null);
+                                                    }}>
+                                                        🔄 Substituir
+                                                    </button>
+                                                    <button className="danger" onClick={() => removerAnexo(t.id)}>
+                                                        🗑️ Remover
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <button className='transacao-editbutton' onClick={() => abrirModalAnexo(t.id)}>
+                                            Anexar arquivo
+                                        </button>
+                                    )}
+
                                     <button className='transacao-deletebutton' onClick={() => abrirModalDeletar(t.id)}>Deletar</button>
                                     <button className='transacao-editbutton' onClick={() => iniciarEdicao(t)}>Editar</button>
                                 </td>

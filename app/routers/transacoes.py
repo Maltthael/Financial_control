@@ -1,10 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
+from pathlib import Path
+import shutil
 from sqlmodel import Session, select
 from database import Transacao, get_session
 from core.auth_token import verificar_token
 from pydantic import BaseModel
 
 router = APIRouter()
+
+UPLOAD_DIR = Path("uploads/comprovantes")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 class TransacaoCreate(BaseModel):
     descricao: str
@@ -111,3 +116,40 @@ def deletar_transacao(
     session.delete(transacao)
     session.commit()
     return {"status": "ok"}
+
+
+@router.put("/api/transacoes/anexar/{transacao_id}")
+def anexar_arquivo(
+    transacao_id: int,
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+    token_data: dict = Depends(verificar_token)
+    
+):
+    user_id = int(token_data["sub"])
+    statement = select(Transacao).where(
+        Transacao.id == transacao_id,
+        Transacao.user_id == user_id
+    )
+    transacao = session.exec(statement).first()
+    
+    if not transacao:
+        raise HTTPException(status_code=404, detail="Transação não encontrada")
+    
+    file_extension = Path(file.filename).suffix
+    file_name = f"user_{user_id}_transacao_{transacao_id}{file_extension}"
+    file_path = UPLOAD_DIR / file_name
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    transacao.arquivo_anexo = str(file_path)
+    session.add(transacao)
+    session.commit()
+    session.refresh(transacao)
+
+    return {
+        "status": "ok",
+        "mensagem": "Arquivo anexado com sucesso",
+        "comprovante_path": transacao.arquivo_anexo
+    }

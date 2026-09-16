@@ -4,9 +4,9 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 
 let mainWindow;
-let pythonProcess = null; // <-- Garanta que está declarado aqui globalmente
+let pythonProcess = null;
 
-// Cria o arquivo de log de forma segura
+
 const logPath = path.join(app.getPath('userData'), 'backend_error.log');
 const logStream = fs.openSync(logPath, 'a');
 
@@ -22,7 +22,7 @@ function startPythonBackend() {
 
         pythonProcess = spawn(pythonExecutable, [], {
             detached: true,
-            cwd: path.dirname(pythonExecutable), // <-- ISSO É CRUCIAL para o .exe achar os arquivos dele
+            cwd: path.dirname(pythonExecutable), 
             stdio: ['ignore', logStream, logStream]
         });
 
@@ -47,7 +47,6 @@ function createWindow() {
         : `file://${path.join(__dirname, 'dist', 'index.html')}`;
 
     mainWindow.loadURL(startUrl);
-    mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {

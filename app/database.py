@@ -50,6 +50,7 @@ class Transacao(SQLModel, table=True):
         default_factory=datetime.utcnow,
         nullable = False
     )
+    arquivo_anexo: Optional[str] = None
 
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
