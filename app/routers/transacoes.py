@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 from pathlib import Path
-import shutil
+import shutil, os
 from sqlmodel import Session, select
 from database import Transacao, get_session
 from core.auth_token import verificar_token
@@ -153,3 +153,33 @@ def anexar_arquivo(
         "mensagem": "Arquivo anexado com sucesso",
         "comprovante_path": transacao.arquivo_anexo
     }
+    
+    
+@router.delete("/api/transacoes/anexo/{transacao_id}")
+def deletar_anexo(
+    transacao_id: int,
+    session: Session = Depends(get_session),
+    token_data: dict = Depends(verificar_token)
+):
+    user_id = int(token_data["sub"])
+    statement = select(Transacao).where(
+        Transacao.id == transacao_id,
+        Transacao.user_id == user_id
+    )
+    transacao = session.exec(statement).first()
+    
+    if not transacao or not transacao.arquivo_anexo:
+        raise HTTPException(status_code=404, detail="Anexo não encontrado")
+    
+    caminho_arquivo = Path(transacao.arquivo_anexo)
+    if caminho_arquivo.exists():
+        try:
+            os.remove(caminho_arquivo)
+        except Exception as e:
+            print(f"Erro ao deletar arquivo do disco: {e}")
+            
+    transacao.arquivo_anexo = None
+    session.add(transacao)
+    session.commit()
+
+    return {"status": "ok", "mensagem": "Anexo removido com sucesso"}
