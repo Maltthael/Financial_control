@@ -1,6 +1,6 @@
 # 💰 Controle Financeiro
 <p align="left">
-  <a href="./README.md">Português</a> | <a href="./readme.en.MD"><b>English</b></a>
+  <b>Português<b> | <a href="./readme.en.md"><b>English</b></a>
 </p>
 Uma aplicação para gestão de finanças pessoais, controle de entradas, saídas e acompanhamento de saldo em tempo real.
 
