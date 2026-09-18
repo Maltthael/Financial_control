@@ -236,7 +236,6 @@ function TransacaoTable() {
                 </div>
             )}
 
-            {/* MODAL DE ANEXAR ARQUIVO */}
             {isAnexoModalOpen && (
                 <div className="delete-modal-overlay">
                     <div className="delete-modal-content">
@@ -288,9 +287,8 @@ function TransacaoTable() {
                                 <td>{formatarDataEHora(t.data_criacao)}</td>
 
                                 <td className='transacao-container-button'>
-                                    {/* LÓGICA DO DROPDOWN */}
                                     {t.arquivo_anexo ? (
-                                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                                        <div className="anexo-dropdown-container">
                                             <button
                                                 className='transacao-editbutton'
                                                 onClick={() => toggleDropdown(t.id)}
@@ -304,16 +302,16 @@ function TransacaoTable() {
                                                         visualizarArquivo(t.arquivo_anexo);
                                                         setDropdownAbertoId(null);
                                                     }}>
-                                                        👁️ Visualizar
+                                                         Visualizar
                                                     </button>
                                                     <button onClick={() => {
                                                         abrirModalAnexo(t.id);
                                                         setDropdownAbertoId(null);
                                                     }}>
-                                                        🔄 Substituir
+                                                         Substituir
                                                     </button>
                                                     <button className="danger" onClick={() => removerAnexo(t.id)}>
-                                                        🗑️ Remover
+                                                         Remover
                                                     </button>
                                                 </div>
                                             )}
